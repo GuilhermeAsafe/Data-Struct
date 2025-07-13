@@ -1,13 +1,16 @@
 #include <iostream>
 
+class node
+{
+public
+
+	int node* head;
+	int value;
+};
+
 int main(){
 
-    std::cout << "imput" << std::endl;
-
-    testando maquina 1
-
-    pass computer (cpu)
-
+ 
     
 
 }
