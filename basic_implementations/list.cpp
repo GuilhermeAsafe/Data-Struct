@@ -6,4 +6,8 @@ int main(){
 
     testando maquina 1
 
+    pass computer (cpu)
+
+    
+
 }
