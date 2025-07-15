@@ -12,7 +12,7 @@ struct node
 
 int main(){
 
-	node* n_1 = new node; //creating the value and ponter (necessary by linked) "my head"
+	node* n_1 = new node; //creating the value and ponter (necessary by linked) my head?
 
 	node* n_2 = new node; 
 
