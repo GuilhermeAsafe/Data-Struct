@@ -15,3 +15,7 @@ git push origin main
 
 --CLONE--
 git clone https://<token>@github.com/GuilhermeAsafe/<repository>.git
+
+--remove folder--
+
+

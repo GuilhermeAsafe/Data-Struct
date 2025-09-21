@@ -1,0 +1,48 @@
+ \documentclass[12pt]{article}
+ 
+ % Pacotes
+ \usepackage[utf8]{inputenc}
+ \usepackage[T1]{fontenc}
+ \usepackage[brazil]{babel}
+ \usepackage{amsmath}
+ \usepackage{graphicx}
+ \usepackage{hyperref}
+ \usepackage{lipsum} % Para gerar texto de exemplo
+ 
+ % Informações do documento
+ \title{Organização TP1}
+ 
+ \begin{document}
+ 	
+ 	\maketitle
+ 	
+ 	\begin{section}{Implementação}
+ 		Organizar primeiro os TAD's (já terei decidido qual tipo de ordenação usar) depois pastas e arquivos. Com o básico feito partimos para o \textit{makefile} conseguir compilar o código. Professor falou para implementar listas para testar oque melhor se encaixa, rodar e compilar... base.
+    	\end{section}
+    
+    \begin{section}{Tratamento de entrada (armazenamento)}
+    	Devemos escolher como armazenar os dados de entrada que serao as imagens. Lista, pilha, fila? Temos que ordenar o vetor de acordo com a ordem da interceção do elemento $j$ com os $j-1$, sendo $j$ o 'primeiro' elemento do vetor.
+    	\end{section}
+    	
+    \begin{section}{Projeção na reta profundidade}
+    	Pense em uma pessoa olhando por cima dessas cenas, onde cada uma diferente e os filamentos são um plastico fino quase transparente. Nesse caso vermelho com azul resultga em roxo. Mas se azul vem antes do vermelho então o resultado da sena final é vermelho, com ajuste do tamanho do intervalo. Seria uma boa ideia para resolver o problema?
+    	\end{section}
+    
+    \begin{section}{Movimento}
+    	Entrada com um M para o movimento da cena, ou seja, vamos ter que buscar na lista, pilha, fila o elemento para poder e mudar o intervalo, somando ou subtraindo
+    	\end{section}
+    	
+    	
+    \begin{section}{Comparações}
+    	O pior a ser implementado é uma algoritimo (até então) $\mathcal{O}(n^2)$, comparando $jn$ com $n-1$ restantes. Mas essa comparação envolve outras opeçaões como cortar o intervalo onde existe interceção.
+    \end{section}
+    	
+    \begin{section}{\texttt{DELETE}}
+    	Assuma que $\psi$ seja uma sena que antecede $j$ e o intervalo $[a,b]$ de psi pertence ao intervalo $[a^{'},b^{'}]$ de $j$, nesse caso, devemos implementar \texttt{DELETE $\psi$}. Uma boa escolha do tipo do TAD's é importante, queremos o menor  $\mathcal{O}(f(n))$. 
+    	\end{section}
+    	
+    	
+ 
+ 	
+ \end{document}
+ 
