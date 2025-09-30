@@ -1,0 +1,73 @@
+ \documentclass[12pt]{article}
+ 
+ % Pacotes
+ \usepackage[utf8]{inputenc}
+ \usepackage[T1]{fontenc}
+ \usepackage[brazil]{babel}
+ \usepackage{amsmath}
+ \usepackage{graphicx}
+ \usepackage{hyperref}
+ \usepackage{lipsum} % Para gerar texto de exemplo
+ 
+ % Informações do documento
+ \title{Organização TP1}
+ 
+ \begin{document}
+ 	
+ 	\maketitle
+ 	
+ 	\section{Introdução}
+ 	Essa trabalho tem como objetivo aplicação da parte 1 de Estrutura de Dados. O problema trata de objetos que podem ser definidos dentro de certo intervalo onde podemos imaginar a interceção entre eles. Cada objeto apresenta um subintervalor fixo e podemos movelo, modificando assim o subintervalo $x$ e $y$.
+ 	
+ 	O objetivo do trabalho é avaliar a capacidade do aluno de aplicar o conteitos ensinados dentro da sala de aula, como ordenação de uma vetor, operações como inserção ou remoção nessas estruturas e análise de complexidade do algoritmo. Se espera do discente uma boa implementação para resolução do problema, buscando um algoritimo estável e eficiente. \\
+ 	
+	A implementação tem como base armazenar os objetos da entrada em uma \textit{lista encadeada} , comparamos e ordenamos  os objetos desta lista com \textit{mergesort}.\\
+	
+	*Ao final da introduc¸ ˜ao, procure apresentar como a documentac¸ ˜ao est´a organizada
+	(“A sec¸ ˜ao 2 trada d*
+ 	
+ 	
+ 	\section{Implementação}
+ 	Para um bom entendimento do problema comecei implementando as classes básicas, \texttt{objeto}, \texttt{movimento} e \texttt{cena}. Com as classes prontas, preciso de um \textit{Tipo Abstrado de Dados} para organizar as entradas fornecidas. A escolha da \textit{lista encadeada} é importante para esse problema pois precisamos realizar 3 operações basicas, \textbf{search} importante para busca na lista no caso em que iremos mover os objetos, \textbf{insert} o básico para armazenar os elementos na lista e \textbf{delete} como foi especificado no documento, o objeto $\psi$ que altecede qualqueres outros objetos e tem o intervalo contido no outro, não aparece na cena, ele é ocluso, então deletamos esse objeto da lista.
+ 	
+ 	 
+ 	\section{Instruções de compilação e execução}
+ 	\section{Análise de complexidade}
+ 	A escolha do TAD facilita a análise, pois conhecemos o custo das operações de \textbf{search}, \textbf{insert} e \textbf{delete}, também conhecemos o algoritmo \textit{mergesort} e podemos chegar facilmente a complexidade.
+ 	
+ 	\subsection{Lista Encadeada}
+ 	A insercerção tem complexidade $\mathcal{O(\text{1})}$.\\
+ 	
+ 	A operação \texttt{search} tem complexidade $\Theta(n)$. Usamo esse método para a classe \texttt{movimento}.\\
+ 	
+ 	A operação \texttt{delete} tem complexidade $\mathcal{O(\text{1})}$, pois não vou deletar o elemento usando \texttt{search}. Durante o método \textit{quicsort} conseguimos identificar que $\psi$ está dentro do intervalo de outro "objeto a sua frente". Nesse caso eu adiciono um método para identificar se essa condição é satisfeita.
+ 	
+ 	\subsection{Método Quicksort}
+ 	Podemos ultilzar este algoritimo em lista encadeadas, para ordenar e comparar os elementos, desta forma  identificamos a oclusão entre os elementos que tem profundidade menor que o um obejto $\psi$.\\
+ 	
+ 	Esse algoritimo tem complexidade  $\mathcal{O(\text{n $\cdot$logn})}$ para o melhor caso, pior caso e caso médio, logo podemos classificalo com $\Theta(n \cdot logn)$. \\
+ 	
+ 	Temos um algorimo que independente da entrada, tem tempo de execução concistente.
+ 	
+ 	
+ 	\subsection{Prova complexidade (tempo de execução)}
+ 	Somamos todas as complexidades temos:
+ 	
+ 	\begin{center}
+ 		$\mathcal{O(\text{1})}$ + $\Theta(n)$ + $\mathcal{O(\text{1})}$ + $\Theta(n \cdot logn)$ = $\Theta(n \cdot logn)$
+ 	\end{center}
+ 	
+ 	Logo, nosso algoritimo tem complexidade $\Theta(n \cdot logn)$. 
+ 	
+ 	\subsection{Prova complexidade (espaço)}
+ 	A lista armazena n elementos e o quicksorte precisa de um espaço $\mathcal{O(\text{n})}$...
+  
+ 	
+ 	\section{Seções adicionais}
+ 	\section{Conclusão}
+ 	
+ 	
+ 
+ 	
+ \end{document}
+ 
