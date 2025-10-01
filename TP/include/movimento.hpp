@@ -15,6 +15,8 @@ public:
      
     
     movimento::movimento(char id , int tempo , int objeto ,  int x_atualizado, int y_atualizado);
+
+    void movimentar(int tempo, float objeto, float x_atualizado, float y_atualizado);
 };
 
 

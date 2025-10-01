@@ -32,3 +32,9 @@ void listas::print()
         current = current->prox;
     }
 }
+
+void listas::busca(float chave_objeto)
+{
+     
+    
+}
