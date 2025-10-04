@@ -1,11 +1,12 @@
-#include "movimento.hpp"
-#include "lista.hpp"
+#include "include/movimento.hpp"
+#include "include/lista.hpp"
+#include "include/objeto.hpp"
 
 #include <iostream>
  
 
 
-movimento::movimento(char id , int tempo , int objeto ,  int x_atualizado, int y_atualizado)
+movimento::movimento(char id , float tempo , float objeto ,  float x_atualizado, float y_atualizado)
 {
     this->id = id;
     this->tempo = tempo;
@@ -17,12 +18,27 @@ movimento::movimento(char id , int tempo , int objeto ,  int x_atualizado, int y
 
 //precisamos chamar o metode de busca que esta no lista.cpp
 
-void movimento::movimentar(int tempo, float objeto, float x_atualizado, float y_atualizado)
+void movimento::movimentar(listas& minha_lista, float tempo, float objeto, float x_atualizado, float y_atualizado)
 {
+    try {
+        // 1. Chama busca() e armazena a referência para o objeto na lista.
+        // Qualquer alteração em 'obj_para_mover' altera o objeto dentro de 'minha_lista'.
+        objetos& obj_para_mover = minha_lista.busca(objeto);
+        
+        // 2. Altera os campos do objeto diretamente usando a referência.
+        obj_para_mover.x = x_atualizado;
+        obj_para_mover.y = y_atualizado;
 
-   listas minha_lista;
-    minha_lista.busca(objeto);
-    
+        // Note que o campo 'objeto' na classe movimento é o ID,
+        // mas você está usando 'x_atualizado' e 'y_atualizado' como float.
 
+        std::cout << "Objeto " << objeto << " movido para X: " << x_atualizado << ", Y: " << y_atualizado << std::endl;
+
+    } catch (const std::runtime_error& e) {
+        // Trata o erro caso o objeto não seja encontrado.
+        std::cerr << "Falha na movimentação: " << e.what() << std::endl;
+    }
 }
+
+
 

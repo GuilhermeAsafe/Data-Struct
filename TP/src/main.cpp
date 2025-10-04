@@ -5,6 +5,7 @@
 // Supondo que você tenha esses includes:
 #include "include/objeto.hpp"
 #include "include/lista.hpp"
+#include "include/movimento.hpp"
  
 using namespace std;
 
@@ -63,6 +64,18 @@ int main()
             } else {
                  std::cerr << "Erro de formato na linha de objeto (O): faltando valores numéricos." << std::endl;
             }
+        }
+
+        else if(id == 'M'){ //M <tempo> <objeto> <x> <y>.
+            float tempo;
+            float objeto, x_atualizado, y_atualizado;
+
+            if (ss >> tempo >> objeto >> x_atualizado >> y_atualizado) {
+                movimento novo_movimento(id, tempo, objeto, x_atualizado, y_atualizado);
+                novo_movimento.movimentar(minha_lista, tempo, objeto, x_atualizado, y_atualizado);
+            } else {
+                 std::cerr << "Erro de formato na linha de movimento (M): faltando valores numéricos." << std::endl;
+        }
 
         } else if(id == 'Q'){
             // O comando 'Q' deve ser verificado com o ID lido
@@ -72,7 +85,8 @@ int main()
         // NÃO é necessário chamar minhaString.clear() aqui, pois getline()
         // já sobrescreve o conteúdo na próxima iteração.
     }
-    
+
+ 
 
     minha_lista.print();
 

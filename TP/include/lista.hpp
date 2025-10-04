@@ -25,7 +25,7 @@ public:
 
     void insert(objetos obj);
     void print();
-    void busca(float obj_busca);
+    objetos& busca(float obj_busca); 
     // void lista::remove(float objeto);
     // void lista::procurar(float objeto);
     
