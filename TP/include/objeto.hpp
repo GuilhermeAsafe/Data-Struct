@@ -19,7 +19,7 @@ public:
     float y;
     float largura;
     
-    objetos(char id , int centro_objeto , int x ,  int y , int largura);
+    objetos(char id , float centro_objeto , float x ,  float y , float largura);
     
 };
 

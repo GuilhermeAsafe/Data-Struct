@@ -1,6 +1,6 @@
 #include "include/objeto.hpp"
 
-objetos::objetos(char id , int centro_objeto , int x ,  int y , int largura)
+objetos::objetos(char id , float centro_objeto , float x ,  float y , float largura)
 {
     this->id = id;
     this->centro_objeto = centro_objeto;

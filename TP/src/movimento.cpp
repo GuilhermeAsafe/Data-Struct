@@ -6,7 +6,7 @@
  
 
 
-movimento::movimento(char id , float tempo , float objeto ,  float x_atualizado, float y_atualizado)
+movimento::movimento(,char id , float tempo , float objeto ,  float x_atualizado, float y_atualizado)
 {
     this->id = id;
     this->tempo = tempo;
@@ -18,7 +18,7 @@ movimento::movimento(char id , float tempo , float objeto ,  float x_atualizado,
 
 //precisamos chamar o metode de busca que esta no lista.cpp
 
-void movimento::movimentar(listas& minha_lista, float tempo, float objeto, float x_atualizado, float y_atualizado)
+void movimento::movimentar(listas& minha_lista)
 {
     try {
         // 1. Chama busca() e armazena a referência para o objeto na lista.

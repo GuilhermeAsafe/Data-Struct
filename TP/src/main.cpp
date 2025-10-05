@@ -68,11 +68,11 @@ int main()
 
         else if(id == 'M'){ //M <tempo> <objeto> <x> <y>.
             float tempo;
-            float objeto, x_atualizado, y_atualizado;
+            float objeto_busca, x_atualizado, y_atualizado;
 
-            if (ss >> tempo >> objeto >> x_atualizado >> y_atualizado) {
-                movimento novo_movimento(id, tempo, objeto, x_atualizado, y_atualizado);
-                novo_movimento.movimentar(minha_lista, tempo, objeto, x_atualizado, y_atualizado);
+            if (ss >> tempo >> objeto_busca>> x_atualizado >> y_atualizado) {
+                movimento novo_movimento(id, tempo, objeto_busca, x_atualizado, y_atualizado);
+                novo_movimento.movimentar(minha_lista, objeto_busca);
             } else {
                  std::cerr << "Erro de formato na linha de movimento (M): faltando valores numéricos." << std::endl;
         }
