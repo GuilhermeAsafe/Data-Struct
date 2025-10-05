@@ -15,7 +15,7 @@ public:
     float y_atualizado;
      
     
-    movimento(listas& minha_lista , char id ,float tempo , float objeto ,  float x_atualizado, float y_atualizado);
+    movimento(char id ,float tempo , float objeto ,  float x_atualizado, float y_atualizado);
 
     void movimentar(listas& minha_lista);
 };

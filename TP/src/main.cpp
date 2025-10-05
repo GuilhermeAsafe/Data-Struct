@@ -72,7 +72,7 @@ int main()
 
             if (ss >> tempo >> objeto_busca>> x_atualizado >> y_atualizado) {
                 movimento novo_movimento(id, tempo, objeto_busca, x_atualizado, y_atualizado);
-                novo_movimento.movimentar(minha_lista, objeto_busca);
+                novo_movimento.movimentar(minha_lista);
             } else {
                  std::cerr << "Erro de formato na linha de movimento (M): faltando valores numéricos." << std::endl;
         }

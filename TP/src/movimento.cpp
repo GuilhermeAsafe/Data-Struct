@@ -6,7 +6,7 @@
  
 
 
-movimento::movimento(,char id , float tempo , float objeto ,  float x_atualizado, float y_atualizado)
+movimento::movimento(char id , float tempo , float objeto ,  float x_atualizado, float y_atualizado)
 {
     this->id = id;
     this->tempo = tempo;
