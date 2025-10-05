@@ -21,6 +21,11 @@ private:
     Node* head = nullptr;
     Node* tail =  nullptr;
 
+    // Métodos auxiliares privados para o Mergesort
+    Node* mergeSort(Node* head); 
+    Node* merge(Node* a, Node* b);
+    Node* getMiddle(Node* head);
+
 public:
 
  
@@ -32,6 +37,10 @@ public:
     void insert(objetos obj);
     void print();
     objetos& busca(float obj_busca); 
+
+     void ordenaPorY();
+
+     
     // void lista::remove(float objeto);
     // void lista::procurar(float objeto);
 
