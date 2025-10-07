@@ -1,38 +1,59 @@
 #ifndef CENA_HPP
 #define CENA_HPP
 
-#include "include/lista.hpp"
+#include "include/lista.hpp" // Para acessar 'objetos'
 
 class Cena
 {
-
 private:
-
-    struct Node_cena
+    // Estrutura para armazenar um segmento visível (corresponde à linha de saída 'S')
+    struct Segmento
     {
-        
-        listas minha_lista;
+        int tempo;
+        float id_objeto;
+        float inicio;
+        float fim;
+        Segmento* prox;
 
-        Node_cena* prox;
-
-        Node_cena(listas minha_lista) : minha_lista(minha_lista), prox(nullptr) {}
-
+        Segmento(int t, float id, float i, float f) : 
+            tempo(t), id_objeto(id), inicio(i), fim(f), prox(nullptr) {}
     };
 
-    Node_cena* head = nullptr;
-    Node_cena* tail =  nullptr;
+    // Lista encadeada para armazenar todos os segmentos visíveis gerados
+    Segmento* head = nullptr;
+    Segmento* tail = nullptr;
 
+    // Função interna para inserir um novo segmento no final da lista
+    void insereSegmento(int tempo, float id, float inicio, float fim);
     
+    // Estrutura auxiliar para rastrear oclusão (Lista de Intervalos Ocupados)
+    struct IntervaloOcupado 
+    {
+        float inicio;
+        float fim;
+        IntervaloOcupado* prox;
+        
+        IntervaloOcupado(float i, float f) : inicio(i), fim(f), prox(nullptr) {}
+    };
+
+    // Função auxiliar para inserir/unir intervalos ocupados na lista de oclusão.
+    void adicionaIntervaloOcupado(IntervaloOcupado** head_ref, float inicio, float fim);
+
+     // --- MÉTODOS AUXILIARES PARA ORDENAÇÃO DA SAÍDA (Por id_objeto) ---
+    Segmento* getMiddleSegmentos(Segmento* head);
+    Segmento* mergeSegmentos(Segmento* a, Segmento* b);
+    Segmento* mergeSortSegmentos(Segmento* head);
 
 public:
 
-    void geraCena ( o b j e t o _ t ∗ vobj , int numobj ,
-cena_t ∗ cena , int numcena ) {
-OrdenaPorY ( vobj , numobj ) ;
-for ( int i =0; i <numobj ; i ++){
-i f ( o b j e t o V i s i v e l ( vobj [ i ] ) ) {
-a d i c i o n a O b j ( vo bj [ i ] , cena ,&numcena ) ;
+    Cena() = default;
+    ~Cena(); // Destrutor para liberar a memória dos segmentos
 
+    // Método principal para processar a lista e gerar a cena no tempo 'tempo_cena'
+    void processaCena(listas& lista_objetos, float tempo_cena);
+
+    // Método para imprimir a cena final no formato 'S'
+    void gravaCena();
 };
 
 #endif

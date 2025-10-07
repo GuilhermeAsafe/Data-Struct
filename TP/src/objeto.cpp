@@ -3,7 +3,7 @@
 objetos::objetos(char id , float centro_objeto , float x ,  float y , float largura)
 {
     this->id = id;
-    this->centro_objeto = centro_objeto;
+    this->id_objeto = centro_objeto;
     this->x = x;
     this->y = y;
     this->largura = largura;

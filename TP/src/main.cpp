@@ -3,11 +3,13 @@
 #include <string>
 #include <stdexcept> // Útil para lidar com exceções de busca
 
+
 // Supondo que você tenha esses includes:
 #include "include/objeto.hpp"
 #include "include/lista.hpp"
 #include "include/movimento.hpp"
- 
+#include "include/cena.hpp"
+
 using namespace std;
 
 
@@ -15,6 +17,7 @@ int main()
 {
     listas minha_lista;
     string minhaString;
+    Cena minha_cena;
 
     
     // O loop while (getline(std::cin, minhaString)) está correto para leitura.
@@ -65,15 +68,19 @@ int main()
             float tempo;
             if (ss >> tempo) {
                 
-                // 1. ORDENAÇÃO da lista
+                // 1. ORDENAÇÃO da lista (Preparação para oclusão)
                 minha_lista.ordenaPorY();
                 
-                // 2. IMPRIME A LISTA ORDENADA (Solicitado pelo usuário)
-                std::cout << "--- CENA GERADA (Ordenada por Y) no tempo: " << tempo << " ---" << std::endl;
-                minha_lista.print();
-                std::cout << "---------------------------------------------------" << std::endl;
+                // 2. PROCESSAMENTO da Cena (detecção de oclusão e armazenamento dos segmentos)
+                minha_cena.processaCena(minha_lista, tempo);
                 
-                // [Aqui entraria a lógica final de detecção de oclusão para gerar o output 'S']
+                // 3. GRAVAÇÃO da Cena (imprime o resultado)
+                minha_cena.gravaCena();
+
+                // Opcional: imprimir lista ordenada para debug, mas deve ser removido no final
+                // std::cout << "--- LISTA ORDENADA (DEBUG) ---" << std::endl;
+                // minha_lista.print(); 
+                // std::cout << "------------------------------" << std::endl;
                 
             } else {
                 std::cerr << "Erro de formato na linha de cena (C): faltando tempo." << std::endl;

@@ -29,7 +29,7 @@ void listas::print()
     Node* current = head;
     while (current)
     {
-        std::cout << "ID: " << current->obj.id << ", Centro: " << current->obj.centro_objeto
+        std::cout << "ID: " << current->obj.id << ", Centro: " << current->obj.id_objeto
                   << ", X: " << current->obj.x << ", Y: " << current->obj.y
                   << ", Largura: " << current->obj.largura << std::endl;
         current = current->prox;
@@ -42,7 +42,7 @@ objetos& listas::busca(float chave_objeto)
     while (current)
     {
         // A chave de busca (objeto) é o campo 'centro_objeto'
-        if (current->obj.centro_objeto == chave_objeto)
+        if (current->obj.id_objeto == chave_objeto)
         {
             // Retorna a referência do objeto real no nó
             return current->obj; 
@@ -104,7 +104,7 @@ listas::Node* listas::merge(Node* a, Node* b) {
 
     // A oclusão prioriza o objeto mais próximo (MAIOR Y).
     // Ordenamos em ordem decrescente de Y.
-    if (a->obj.y >= b->obj.y) {
+    if (a->obj.y <= b->obj.y) {
         result = a;
         result->prox = merge(a->prox, b);
     } else {

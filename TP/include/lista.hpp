@@ -6,7 +6,7 @@
 class listas
 {
 
-private:
+public:
 
     struct Node
     {
@@ -26,6 +26,8 @@ private:
     Node* merge(Node* a, Node* b);
     Node* getMiddle(Node* head);
 
+    Node* getHead() const { return head; } // <--- Adicione esta linha
+
 public:
 
  
@@ -40,7 +42,7 @@ public:
 
      void ordenaPorY();
 
-     
+
     // void lista::remove(float objeto);
     // void lista::procurar(float objeto);
 
