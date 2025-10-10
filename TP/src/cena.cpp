@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm> // Para std::max, std::min (permitidos em C++11 para tipos básicos)
 #include <stdexcept>
+#include <iomanip> // Adicione esta biblioteca para formatar a saída
 
 // ====================================================================
 // FUNÇÕES AUXILIARES INTERNAS
@@ -143,24 +144,36 @@ Cena::Segmento* Cena::mergeSortSegmentos(Segmento* head) {
 // FUNÇÃO DE SAÍDA CORRIGIDA (Chama a ordenação antes de imprimir)
 // ====================================================================
 
+ // ... (código anterior omitido)
+
 void Cena::gravaCena() {
     // 1. ORDENAR A LISTA DE SEGMENTOS POR id_objeto (ASCENDENTE)
-    // O head da lista de segmentos é atualizado para o nó inicial da lista ordenada.
     head = mergeSortSegmentos(head);
     
-    // 2. Imprimir a lista ordenada e limpar a memória
+    // 2. Configurar a precisão para todas as saídas decimais
+    std::cout << std::fixed << std::setprecision(2); // PADRÃO DE DUAS CASAS DECIMAIS
+    
+    // 3. Imprimir a lista ordenada e limpar a memória
     Segmento* current = head;
     
     while (current != nullptr) {
         // Formato de saída: S <tempo> <objeto> <inicio> <fim>
-        std::cout << "S " << current->tempo << " " << (int)current->id_objeto 
-                  << " " << current->inicio << " " << current->fim << std::endl;
+        std::cout << "S " 
+                  << current->tempo << " " 
+                  << (int)current->id_objeto 
+                  << " " << current->inicio  // A precisão de 2 casas é aplicada aqui
+                  << " " << current->fim     // E aqui
+                  << std::endl
+                  << std::endl;
         
         // Limpeza do segmento após a impressão
         Segmento* a_remover = current;
         current = current->prox;
         delete a_remover;
     }
+
+    // Opcional: Reverter a formatação padrão do stream, para o caso de uso posterior.
+    std::cout << std::defaultfloat; 
 
     // Resetar head e tail após a limpeza
     head = nullptr;

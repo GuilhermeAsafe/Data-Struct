@@ -32,8 +32,6 @@ void movimento::movimentar(listas& minha_lista)
         // Note que o campo 'objeto' na classe movimento é o ID,
         // mas você está usando 'x_atualizado' e 'y_atualizado' como float.
 
-        std::cout << "Objeto " << objeto << " movido para X: " << x_atualizado << ", Y: " << y_atualizado << std::endl;
-
     } catch (const std::runtime_error& e) {
         // Trata o erro caso o objeto não seja encontrado.
         std::cerr << "Falha na movimentação: " << e.what() << std::endl;

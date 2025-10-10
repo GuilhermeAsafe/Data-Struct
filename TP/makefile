@@ -1,25 +1,24 @@
-# O alvo principal, agora incluindo a dependência de cena.o
-main: objeto.o lista.o movimento.o cena.o main.o
-	g++ -std=c++11 objeto.o lista.o movimento.o cena.o main.o -o main
+# O alvo principal, que agora depende da compilação de todos os objetos na pasta obj.
+all: obj/objeto.o obj/lista.o obj/movimento.o obj/cena.o obj/main.o
+	g++ -std=c++11 obj/objeto.o obj/lista.o obj/movimento.o obj/cena.o obj/main.o -o bin/tp1.out
 
-#para que .o exista temos que compilar o .cpp
-objeto.o: src/objeto.cpp include/objeto.hpp
-	g++ -I . -std=c++11 -c src/objeto.cpp -o objeto.o
+# --- Regras de Compilação: Mover .o para /obj ---
 
-lista.o: src/lista.cpp include/lista.hpp include/objeto.hpp
-	g++ -I . -std=c++11 -c src/lista.cpp -o lista.o     
+obj/objeto.o: src/objeto.cpp include/objeto.hpp
+	g++ -I . -std=c++11 -c src/objeto.cpp -o obj/objeto.o
 
-movimento.o: src/movimento.cpp include/movimento.hpp include/lista.hpp include/objeto.hpp
-	g++ -I . -std=c++11 -c src/movimento.cpp -o movimento.o
+obj/lista.o: src/lista.cpp include/lista.hpp include/objeto.hpp
+	g++ -I . -std=c++11 -c src/lista.cpp -o obj/lista.o     
 
-# NOVO ALVO: Regra para compilar o arquivo de cena
-cena.o: src/cena.cpp include/cena.hpp include/lista.hpp include/objeto.hpp
-	g++ -I . -std=c++11 -c src/cena.cpp -o cena.o
+obj/movimento.o: src/movimento.cpp include/movimento.hpp include/lista.hpp include/objeto.hpp
+	g++ -I . -std=c++11 -c src/movimento.cpp -o obj/movimento.o
 
-# O alvo main.o precisa da dependência de cena.hpp agora
-main.o: src/main.cpp include/lista.hpp include/objeto.hpp include/movimento.hpp include/cena.hpp
-	g++ -I . -std=c++11 -c src/main.cpp -o main.o
+obj/cena.o: src/cena.cpp include/cena.hpp include/lista.hpp include/objeto.hpp
+	g++ -I . -std=c++11 -c src/cena.cpp -o obj/cena.o
+
+obj/main.o: src/main.cpp include/lista.hpp include/objeto.hpp include/movimento.hpp include/cena.hpp
+	g++ -I . -std=c++11 -c src/main.cpp -o obj/main.o
     
-#limpar os .o e o main
+# --- Regra de Limpeza: Remove apenas os arquivos gerados (mantendo as pastas) ---
 clean:
-	rm -f *.o main
+	rm -f obj/*.o bin/tp1.out
