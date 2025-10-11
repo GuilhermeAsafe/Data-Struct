@@ -14,12 +14,12 @@ class objetos
 public:
 
     char id = 'O';
-    float id_objeto;
-    float x;
-    float y;
-    float largura;
+    double id_objeto;
+    double x;
+    double y;
+    double largura;
     
-    objetos(char id , float id_objeto , float x ,  float y , float largura);
+    objetos(char id , double id_objeto , double x ,  double y , double largura);
     
 };
 

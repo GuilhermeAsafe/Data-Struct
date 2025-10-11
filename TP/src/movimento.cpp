@@ -6,7 +6,7 @@
  
 
 
-movimento::movimento(char id , float tempo , float objeto ,  float x_atualizado, float y_atualizado)
+movimento::movimento(char id , double tempo , double objeto ,  double x_atualizado, double y_atualizado)
 {
     this->id = id;
     this->tempo = tempo;
@@ -30,7 +30,7 @@ void movimento::movimentar(listas& minha_lista)
         obj_para_mover.y = y_atualizado;
 
         // Note que o campo 'objeto' na classe movimento é o ID,
-        // mas você está usando 'x_atualizado' e 'y_atualizado' como float.
+        // mas você está usando 'x_atualizado' e 'y_atualizado' como double.
 
     } catch (const std::runtime_error& e) {
         // Trata o erro caso o objeto não seja encontrado.

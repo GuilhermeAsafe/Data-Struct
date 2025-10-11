@@ -36,7 +36,7 @@ void listas::print()
     }
 }
 
-objetos& listas::busca(float chave_objeto)
+objetos& listas::busca(double chave_objeto)
 {
     Node* current = head;
     while (current)

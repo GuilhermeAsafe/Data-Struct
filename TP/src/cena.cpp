@@ -24,7 +24,7 @@ Cena::~Cena() {
 }
 
 // Implementação de inserção de Segmento na lista de resultados da cena
-void Cena::insereSegmento(int tempo, float id, float inicio, float fim) {
+void Cena::insereSegmento(int tempo, double id, double inicio, double fim) {
     if (inicio >= fim) return; // Garante segmento válido
 
     Segmento* novo = new Segmento(tempo, id, inicio, fim);
@@ -39,7 +39,7 @@ void Cena::insereSegmento(int tempo, float id, float inicio, float fim) {
 
 // Implementação para adicionar (e UNIR) um novo intervalo ocupado.
 // Mantém a lista ordenada e com intervalos disjuntos (canônicos).
-void Cena::adicionaIntervaloOcupado(IntervaloOcupado** head_ref, float inicio, float fim) {
+void Cena::adicionaIntervaloOcupado(IntervaloOcupado** head_ref, double inicio, double fim) {
     if (inicio >= fim) return;
 
     IntervaloOcupado dummy(0, 0); // Nó sentinela (head falso)
@@ -64,8 +64,8 @@ void Cena::adicionaIntervaloOcupado(IntervaloOcupado** head_ref, float inicio, f
     }
 
     // 3. Ocorre sobreposição: atualiza o início e fim para UNIR intervalos
-    float novo_inicio = std::min(inicio, current->inicio);
-    float novo_fim = fim; 
+    double novo_inicio = std::min(inicio, current->inicio);
+    double novo_fim = fim; 
 
     // Remove e estende o intervalo atual até que não haja mais sobreposição
     while (current != nullptr && current->inicio <= novo_fim) {
@@ -150,34 +150,8 @@ void Cena::gravaCena() {
     // 1. ORDENAR A LISTA DE SEGMENTOS POR id_objeto (ASCENDENTE)
     head = mergeSortSegmentos(head);
     
-    // 2. Configurar a precisão para todas as saídas decimais
-    std::cout << std::fixed << std::setprecision(2); // PADRÃO DE DUAS CASAS DECIMAIS
+   
     
-    // 3. Imprimir a lista ordenada e limpar a memória
-    Segmento* current = head;
-    
-    while (current != nullptr) {
-        // Formato de saída: S <tempo> <objeto> <inicio> <fim>
-        std::cout << "S " 
-                  << current->tempo << " " 
-                  << (int)current->id_objeto 
-                  << " " << current->inicio  // A precisão de 2 casas é aplicada aqui
-                  << " " << current->fim     // E aqui
-                  << std::endl
-                  << std::endl;
-        
-        // Limpeza do segmento após a impressão
-        Segmento* a_remover = current;
-        current = current->prox;
-        delete a_remover;
-    }
-
-    // Opcional: Reverter a formatação padrão do stream, para o caso de uso posterior.
-    std::cout << std::defaultfloat; 
-
-    // Resetar head e tail após a limpeza
-    head = nullptr;
-    tail = nullptr;
 }
 
 
@@ -185,7 +159,7 @@ void Cena::gravaCena() {
 // MÉTODO PRINCIPAL: processaCena
 // ====================================================================
 
-void Cena::processaCena(listas& lista_objetos, float tempo_cena) {
+void Cena::processaCena(listas& lista_objetos, double tempo_cena) {
     // A lista DEVE estar ordenada por Y (distância ao observador) -
     // O objeto mais próximo (menor Y) deve ser o primeiro.
     // Assumimos que lista_objetos.ordenaPorY() foi chamada ANTES (em main.cpp).
@@ -200,11 +174,11 @@ void Cena::processaCena(listas& lista_objetos, float tempo_cena) {
         objetos& obj = current_obj->obj;
 
         // 1. Calcular o intervalo do objeto
-        float obj_min_x = obj.x - obj.largura / 2.0;
-        float obj_max_x = obj.x + obj.largura / 2.0;
+        double obj_min_x = obj.x - obj.largura / 2.0;
+        double obj_max_x = obj.x + obj.largura / 2.0;
 
         // 2. Fragmentar o objeto com base nos intervalos já ocupados (oclusão)
-        float ponto_de_inicio = obj_min_x;
+        double ponto_de_inicio = obj_min_x;
         IntervaloOcupado* ocupado = canvas_ocupado;
 
         // Percorre os blocos oclusos no 'canvas'
@@ -213,7 +187,7 @@ void Cena::processaCena(listas& lista_objetos, float tempo_cena) {
             // 2a. Existe um segmento visível ANTES do bloco ocupado?
             if (ponto_de_inicio < ocupado->inicio) {
                 // O segmento visível é [ponto_de_inicio, min(obj_max_x, ocupado->inicio)]
-                float fim_visivel = std::min(obj_max_x, ocupado->inicio);
+                double fim_visivel = std::min(obj_max_x, ocupado->inicio);
                 
                 if (fim_visivel > ponto_de_inicio) {
                     // Adiciona a parte visível aos resultados da cena

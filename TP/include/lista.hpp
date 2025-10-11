@@ -38,13 +38,13 @@ public:
 
     void insert(objetos obj);
     void print();
-    objetos& busca(float obj_busca); 
+    objetos& busca(double obj_busca); 
 
      void ordenaPorY();
 
 
-    // void lista::remove(float objeto);
-    // void lista::procurar(float objeto);
+    // void lista::remove(double objeto);
+    // void lista::procurar(double objeto);
 
 
 //     ~listas(){

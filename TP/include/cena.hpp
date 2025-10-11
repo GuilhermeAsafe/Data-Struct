@@ -5,17 +5,17 @@
 
 class Cena
 {
-private:
+public:
     // Estrutura para armazenar um segmento visível (corresponde à linha de saída 'S')
     struct Segmento
     {
         int tempo;
-        float id_objeto;
-        float inicio;
-        float fim;
+        double id_objeto;
+        double inicio;
+        double fim;
         Segmento* prox;
 
-        Segmento(int t, float id, float i, float f) : 
+        Segmento(int t, double id, double i, double f) : 
             tempo(t), id_objeto(id), inicio(i), fim(f), prox(nullptr) {}
     };
 
@@ -24,20 +24,20 @@ private:
     Segmento* tail = nullptr;
 
     // Função interna para inserir um novo segmento no final da lista
-    void insereSegmento(int tempo, float id, float inicio, float fim);
+    void insereSegmento(int tempo, double id, double inicio, double fim);
     
     // Estrutura auxiliar para rastrear oclusão (Lista de Intervalos Ocupados)
-    struct IntervaloOcupado 
+      struct IntervaloOcupado 
     {
-        float inicio;
-        float fim;
+        double inicio;
+        double fim;
         IntervaloOcupado* prox;
         
-        IntervaloOcupado(float i, float f) : inicio(i), fim(f), prox(nullptr) {}
+        IntervaloOcupado(double i, double f) : inicio(i), fim(f), prox(nullptr) {}
     };
 
     // Função auxiliar para inserir/unir intervalos ocupados na lista de oclusão.
-    void adicionaIntervaloOcupado(IntervaloOcupado** head_ref, float inicio, float fim);
+    void adicionaIntervaloOcupado(IntervaloOcupado** head_ref, double inicio, double fim);
 
      // --- MÉTODOS AUXILIARES PARA ORDENAÇÃO DA SAÍDA (Por id_objeto) ---
     Segmento* getMiddleSegmentos(Segmento* head);
@@ -49,11 +49,20 @@ public:
     Cena() = default;
     ~Cena(); // Destrutor para liberar a memória dos segmentos
 
+    // NOVO: Getter para o head da lista de segmentos
+    Segmento* getHeadSegmentos() const { return head; } // <-- Adicione este método
+
     // Método principal para processar a lista e gerar a cena no tempo 'tempo_cena'
-    void processaCena(listas& lista_objetos, float tempo_cena);
+    void processaCena(listas& lista_objetos, double tempo_cena);
+
+    void resetSegmentos() {
+        head = nullptr;
+        tail = nullptr;
+    }
+
 
     // Método para imprimir a cena final no formato 'S'
     void gravaCena();
 };
 
-#endif
+#endif 
