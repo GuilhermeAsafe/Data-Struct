@@ -229,6 +229,3 @@ void Cena::processaCena(listas& lista_objetos, double tempo_cena) {
     // Gravação da cena (chamada no main.cpp)
 }
 
-
-
-

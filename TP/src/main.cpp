@@ -58,7 +58,7 @@ public:
         }
     }
 
- // Imprime todos os conteúdos acumulados na ordem, aplicando a formatação
+     // Imprime todos os conteúdos acumulados na ordem, aplicando a formatação
     void imprime() const {
         // Configura a formatação para 2 casas decimais.
         std::cout << std::fixed << std::setprecision(2); 
@@ -84,39 +84,29 @@ public:
        std::cout << std::defaultfloat; 
     }
        
-    };// CORREÇÃO: A chave de fechamento da função estava faltando!
-// ==========================================================
+    };
 
-
-int main(int argc, char* argv[])
+int main() 
 {
-    // 1. VERIFICAÇÃO DE ARGUMENTOS
-    // Espera-se 2 argumentos: [1] nome do programa e [2] nome do arquivo
-    if (argc != 2) {
-        std::cerr << "Erro: Uso incorreto. Utilize: " << argv[0] << " <arquivo_de_entrada>" << std::endl;
-        return 1;
-    }
-
-    // 2. ABERTURA DO ARQUIVO
-    std::ifstream arquivo_entrada(argv[1]);
-
-    // 3. VERIFICAÇÃO DE ABERTURA DO ARQUIVO
-    if (!arquivo_entrada.is_open()) {
-        std::cerr << "Erro: Nao foi possivel abrir o arquivo " << argv[1] << std::endl;
-        return 1;
-    }
-    
-// Declarações (listas, cena e variaveis de controle)
+    // Declarações (listas, cena e variaveis de controle)
     listas minha_lista;
     string minhaString;
     Cena minha_cena;
     SaidaFinal print_final;
 
-    // O loop while (getline(std::cin, minhaString)) está correto para leitura.
-    while (getline(arquivo_entrada, minhaString))
-    {
-        // 1. Cria um stream a partir da linha
-        std::stringstream ss(minhaString);
+    #include "include/objeto.hpp"
+
+objetos::objetos(char id , double centro_objeto , double x ,  double y , double largura)
+{
+    this->id = id;
+    this->id_objeto = centro_objeto;
+    this->x = x;
+    this->y = y;
+    this->largura = largura;
+}
+
+//objeto::objeto(char id , int centro_obeto , int x ,  int y , int largura) : 
+//id(id), centro_obeto(centro_obeto), x(x), y(y), largura(largura) {}
         
         char id;
         
@@ -128,11 +118,9 @@ int main(int argc, char* argv[])
 
         // 3. Verifica o ID lido e processa
         if(id == 'O'){
-            // A leitura é em double, mas o construtor espera int, C++ fará a coerção (cast implícito)
             double centro_objeto, x, y, largura;
             
             if (ss >> centro_objeto >> x >> y >> largura) {
-                // Passa double; C++ converte para os int's esperados pelo construtor de objetos
                 objetos novo_objeto(id, centro_objeto, x, y, largura); 
                 minha_lista.insert(novo_objeto);
             } else {
@@ -186,22 +174,18 @@ int main(int argc, char* argv[])
                     current_segmento = next_segmento;
                 }
                 
-                // Se a classe Cena tiver um método privado para resetar o head/tail, 
-                // ele deveria ser chamado aqui. Como a limpeza foi feita nó a nó, 
-                // o destrutor de Cena lidará com o estado final.
                 // CORREÇÃO ESSENCIAL: Zera os ponteiros de Cena para evitar o double free no destrutor.
-                minha_cena.resetSegmentos(); // <-- ADICIONE ESTA LINHA CORRIGIDA
+                minha_cena.resetSegmentos(); 
                 
             } else {
                 std::cerr << "Erro de formato na linha de cena (C): faltando tempo." << std::endl;
             }
 
         }
-        
     }
 
+    // IMPRESSÃO FINAL: Executada assim que o std::cin chega ao EOF.
     print_final.imprime(); 
-
 
     return 0;
 }
