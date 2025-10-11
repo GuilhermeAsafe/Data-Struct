@@ -26,14 +26,14 @@ public:
     Node* merge(Node* a, Node* b);
     Node* getMiddle(Node* head);
 
-    Node* getHead() const { return head; } // <--- Adicione esta linha
+    Node* getHead() const { return head; }  
 
 public:
 
  
 
-// Em lista.cpp
-     // ~listas(); // Declaração do destrutor
+    
+     ~listas(); // Declaração do destrutor
 
 
     void insert(objetos obj);
@@ -42,21 +42,7 @@ public:
 
      void ordenaPorY();
 
-
-    // void lista::remove(double objeto);
-    // void lista::procurar(double objeto);
-
-
-//     ~listas(){
-//     Node* current = head;
-//     Node* nextNode = nullptr;
-//     while (current != nullptr)
-//     {
-//         nextNode = current->prox;
-//         delete current;
-//         current = nextNode;
-//     }
-// }
+ 
     
 };
 

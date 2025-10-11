@@ -2,15 +2,19 @@
 #include "include/lista.hpp"
 #include "include/objeto.hpp"
 #include <iostream>
-#include <algorithm> // Para std::max, std::min (permitidos em C++11 para tipos básicos)
+#include <algorithm> // Para std::max, std::min
 #include <stdexcept>
-#include <iomanip> // Adicione esta biblioteca para formatar a saída
+#include <iomanip> 
 
 // ====================================================================
-// FUNÇÕES AUXILIARES INTERNAS
+// DESTRUTOR E FUNÇÕES DE INSERÇÃO
 // ====================================================================
 
-// Implementação do Destrutor (limpeza de memória)
+/**
+ * @brief Destrutor: Libera a memória da lista de Segmentos.
+ * (Nota: Em main.cpp, os Segmentos são deletados e o head/tail zerados antes
+ * que este destrutor seja chamado para evitar double free).
+ */
 Cena::~Cena() {
     Segmento* current = head;
     Segmento* nextNode = nullptr;
@@ -23,7 +27,9 @@ Cena::~Cena() {
     tail = nullptr;
 }
 
-// Implementação de inserção de Segmento na lista de resultados da cena
+/**
+ * @brief Insere um novo Segmento visível na lista de resultados da cena.
+ */
 void Cena::insereSegmento(int tempo, double id, double inicio, double fim) {
     if (inicio >= fim) return; // Garante segmento válido
 
@@ -37,25 +43,26 @@ void Cena::insereSegmento(int tempo, double id, double inicio, double fim) {
     }
 }
 
-// Implementação para adicionar (e UNIR) um novo intervalo ocupado.
-// Mantém a lista ordenada e com intervalos disjuntos (canônicos).
+/**
+ * @brief Adiciona/Une um novo intervalo ocupado ao 'canvas'.
+ * Mantém a lista de Intervalos Ocupados ordenada e canônica (disjunta).
+ */
 void Cena::adicionaIntervaloOcupado(IntervaloOcupado** head_ref, double inicio, double fim) {
     if (inicio >= fim) return;
 
-    IntervaloOcupado dummy(0, 0); // Nó sentinela (head falso)
+    IntervaloOcupado dummy(0, 0); 
     dummy.prox = *head_ref;
     IntervaloOcupado* prev = &dummy;
     IntervaloOcupado* current = *head_ref;
 
-    // 1. Pula intervalos que estão completamente ANTES do novo
+    // 1. Pula intervalos existentes que estão ANTES do novo
     while (current != nullptr && current->fim < inicio) {
         prev = current;
         current = current->prox;
     }
 
-    // 2. Pula intervalos que estão completamente DEPOIS do novo
+    // 2. Se não houver sobreposição, insere o novo intervalo
     if (current == nullptr || fim < current->inicio) {
-        // Insere o novo intervalo sem união
         IntervaloOcupado* novo = new IntervaloOcupado(inicio, fim);
         novo->prox = current;
         prev->prox = novo;
@@ -63,16 +70,16 @@ void Cena::adicionaIntervaloOcupado(IntervaloOcupado** head_ref, double inicio, 
         return;
     }
 
-    // 3. Ocorre sobreposição: atualiza o início e fim para UNIR intervalos
+    // 3. Ocorre sobreposição: inicia a união
     double novo_inicio = std::min(inicio, current->inicio);
     double novo_fim = fim; 
 
-    // Remove e estende o intervalo atual até que não haja mais sobreposição
+    // Remove e estende o intervalo atual até que a sobreposição termine
     while (current != nullptr && current->inicio <= novo_fim) {
         novo_fim = std::max(novo_fim, current->fim);
         IntervaloOcupado* temp = current;
         current = current->prox;
-        delete temp;
+        delete temp; // Libera memória do intervalo que está sendo unido
     }
 
     // 4. Insere o novo intervalo UNIDO
@@ -87,6 +94,9 @@ void Cena::adicionaIntervaloOcupado(IntervaloOcupado** head_ref, double inicio, 
 // IMPLEMENTAÇÃO DO MERGESORT PARA SEGMENTO (Ordenação por ID_OBJETO)
 // ====================================================================
 
+/**
+ * @brief Encontra o nó do meio da lista de Segmentos.
+ */
 Cena::Segmento* Cena::getMiddleSegmentos(Segmento* head) {
     if (head == nullptr) {
         return head;
@@ -105,6 +115,9 @@ Cena::Segmento* Cena::getMiddleSegmentos(Segmento* head) {
     return slow;
 }
 
+/**
+ * @brief Combina duas sublistas ordenadas de Segmentos.
+ */
 Cena::Segmento* Cena::mergeSegmentos(Segmento* a, Segmento* b) {
     if (a == nullptr) return b;
     if (b == nullptr) return a;
@@ -123,6 +136,9 @@ Cena::Segmento* Cena::mergeSegmentos(Segmento* a, Segmento* b) {
     return result;
 }
 
+/**
+ * @brief Divide a lista e chama a função de merge para Segmentos.
+ */
 Cena::Segmento* Cena::mergeSortSegmentos(Segmento* head) {
     if (head == nullptr || head->prox == nullptr) {
         return head;
@@ -141,17 +157,16 @@ Cena::Segmento* Cena::mergeSortSegmentos(Segmento* head) {
 
 
 // ====================================================================
-// FUNÇÃO DE SAÍDA CORRIGIDA (Chama a ordenação antes de imprimir)
+// FUNÇÃO DE SAÍDA (Apenas Ordena)
 // ====================================================================
 
- // ... (código anterior omitido)
-
+/**
+ * @brief Ordena a lista interna de Segmentos por id_objeto.
+ * (A transferência de dados e limpeza de memória é feita em main.cpp).
+ */
 void Cena::gravaCena() {
-    // 1. ORDENAR A LISTA DE SEGMENTOS POR id_objeto (ASCENDENTE)
+    // Ordena a lista de Segmentos por id_objeto (ASCENDENTE)
     head = mergeSortSegmentos(head);
-    
-   
-    
 }
 
 
@@ -159,21 +174,23 @@ void Cena::gravaCena() {
 // MÉTODO PRINCIPAL: processaCena
 // ====================================================================
 
+/**
+ * @brief Processa a oclusão para todos os objetos na lista e gera os Segmentos visíveis.
+ * @param lista_objetos Lista de objetos ordenada por Y (distância).
+ * @param tempo_cena O tempo atual da cena.
+ */
 void Cena::processaCena(listas& lista_objetos, double tempo_cena) {
-    // A lista DEVE estar ordenada por Y (distância ao observador) -
-    // O objeto mais próximo (menor Y) deve ser o primeiro.
-    // Assumimos que lista_objetos.ordenaPorY() foi chamada ANTES (em main.cpp).
-
-    // Estrutura para rastrear a oclusão (o 'canvas' 1D)
+    
+    // Lista para rastrear os intervalos de X que já estão bloqueados por objetos mais próximos
     IntervaloOcupado* canvas_ocupado = nullptr;
     
-    // Obter o cabeçalho da lista de objetos
     listas::Node* current_obj = lista_objetos.getHead(); 
 
+    // Itera sobre os objetos, do mais próximo para o mais distante (graças à ordenação por Y)
     while (current_obj != nullptr) {
         objetos& obj = current_obj->obj;
 
-        // 1. Calcular o intervalo do objeto
+        // 1. Calcular o intervalo total de X do objeto
         double obj_min_x = obj.x - obj.largura / 2.0;
         double obj_max_x = obj.x + obj.largura / 2.0;
 
@@ -184,19 +201,17 @@ void Cena::processaCena(listas& lista_objetos, double tempo_cena) {
         // Percorre os blocos oclusos no 'canvas'
         while (ocupado != nullptr && ponto_de_inicio < obj_max_x) {
             
-            // 2a. Existe um segmento visível ANTES do bloco ocupado?
+            // 2a. Se houver espaço antes do bloco ocupado, é um segmento visível
             if (ponto_de_inicio < ocupado->inicio) {
-                // O segmento visível é [ponto_de_inicio, min(obj_max_x, ocupado->inicio)]
                 double fim_visivel = std::min(obj_max_x, ocupado->inicio);
                 
                 if (fim_visivel > ponto_de_inicio) {
-                    // Adiciona a parte visível aos resultados da cena
+                    // Adiciona a parte visível aos resultados
                     insereSegmento((int)tempo_cena, obj.id_objeto, ponto_de_inicio, fim_visivel);
                 }
             }
             
-            // 2b. O próximo ponto de início para busca é o fim do bloco ocupado.
-            // (Se o objeto for maior que o bloco, avança; se for menor, oclui totalmente essa parte)
+            // 2b. Atualiza o ponto de início para continuar a busca APÓS o bloco ocupado
             if (ocupado->fim > ponto_de_inicio) {
                 ponto_de_inicio = ocupado->fim;
             }
@@ -204,20 +219,18 @@ void Cena::processaCena(listas& lista_objetos, double tempo_cena) {
             ocupado = ocupado->prox;
         }
 
-        // 3. Existe um segmento visível APÓS o último bloco ocupado?
+        // 3. Se houver espaço APÓS o último bloco ocupado, é um segmento visível final
         if (ponto_de_inicio < obj_max_x) {
-            // O segmento visível é [ponto_de_inicio, obj_max_x]
             insereSegmento((int)tempo_cena, obj.id_objeto, ponto_de_inicio, obj_max_x);
         }
 
-        // 4. Adicionar o intervalo TOTAL do objeto (mesmo o ocluso) ao canvas para bloquear
-        // objetos que estão ainda mais atrás.
+        // 4. Adiciona o intervalo TOTAL deste objeto ao canvas para bloquear objetos mais distantes
         adicionaIntervaloOcupado(&canvas_ocupado, obj_min_x, obj_max_x);
         
         current_obj = current_obj->prox;
     }
     
-    // Limpar a memória temporária do canvas
+    // Limpar a memória da lista temporária 'canvas_ocupado' (IntervaloOcupado)
     IntervaloOcupado* current_canvas = canvas_ocupado;
     IntervaloOcupado* next_canvas = nullptr;
     while (current_canvas != nullptr) {
@@ -225,7 +238,4 @@ void Cena::processaCena(listas& lista_objetos, double tempo_cena) {
         delete current_canvas;
         current_canvas = next_canvas;
     }
-    
-    // Gravação da cena (chamada no main.cpp)
 }
-

@@ -2,10 +2,9 @@
 #include <sstream> 
 #include <string>  
 #include <stdexcept> 
-#include <iomanip> // NECESSÁRIO para a formatação de double
-#include <fstream> // NOVO: Necessário para manipulação de arquivos
+#include <iomanip> // Necessário para std::fixed, std::setprecision, std::defaultfloat
 
-// Supondo que você tenha esses includes:
+// Includes das Classes TAD
 #include "include/objeto.hpp"
 #include "include/lista.hpp"
 #include "include/movimento.hpp"
@@ -14,21 +13,22 @@
 using namespace std;
 
 // ==========================================================
-// NOVO: LISTA ENCADEADA PARA ARMAZENAR A SAÍDA FINAL (print_final)
-// Esta lista armazena os DADOS brutos para a impressão final.
+// CLASSE: SaidaFinal
+// Funcionalidade: Estrutura de dados (lista encadeada) para acumular
+// e imprimir a saída final do programa, garantindo a ordem
+// e o formato exato (precisão e quebras de linha).
 // ==========================================================
 class SaidaFinal {
 private:
-    // Estrutura para armazenar os DADOS de cada linha 'S'
+    // Estrutura do nó que armazena os dados de um segmento visível ('S')
     struct SegmentoSaida {
         int tempo;
-        // O id_objeto é double na classe objetos, mas é inteiro na saída ('S 6 0...')
         int id_objeto; 
         double inicio;
         double fim;
         SegmentoSaida* prox;
         
-        // Construtor para armazenar os dados crus
+        // Construtor
         SegmentoSaida(int t, int id, double i, double f) 
             : tempo(t), id_objeto(id), inicio(i), fim(f), prox(nullptr) {}
     };
@@ -36,7 +36,7 @@ private:
     SegmentoSaida* tail = nullptr;
 
 public:
-    // Destrutor para liberar a memória
+    // Destrutor: Libera a memória de todos os nós SegmentoSaida criados
     ~SaidaFinal() {
         SegmentoSaida* current = head;
         while (current != nullptr) {
@@ -58,69 +58,65 @@ public:
         }
     }
 
-     // Imprime todos os conteúdos acumulados na ordem, aplicando a formatação
+    // Imprime toda a saída acumulada no formato exigido
     void imprime() const {
-        // Configura a formatação para 2 casas decimais.
+        // Configura a precisão de 2 casas decimais para o output
         std::cout << std::fixed << std::setprecision(2); 
         
         SegmentoSaida* current = head;
         while (current != nullptr) {
-            // 1. Imprime os dados SEM QUEBRA DE LINHA NO FINAL
+            // 1. Imprime os dados (sem quebra de linha no final desta linha)
             std::cout << "S " 
                       << current->tempo << " " 
                       << current->id_objeto 
                       << " " << current->inicio 
                       << " " << current->fim; 
                       
-            // 2. CRÍTICO: Imprime a quebra de linha (o separador) SOMENTE se houver um próximo elemento.
+            // 2. Imprime a quebra de linha (separador) SOMENTE se não for a última linha.
             if (current->prox != nullptr) {
-                std::cout << std::endl; // Adiciona o \n de separação
+                std::cout << std::endl; 
             }
 
             current = current->prox;
         }
         
-       // Reverte a formatação do stream
+       // Reverte a formatação do stream para o padrão
        std::cout << std::defaultfloat; 
     }
-       
-    };
+};
+// ==========================================================
 
+
+// Função Principal
 int main() 
 {
-    // Declarações (listas, cena e variaveis de controle)
+    // Declarações das classes TAD e variáveis de controle
     listas minha_lista;
     string minhaString;
     Cena minha_cena;
-    SaidaFinal print_final;
+    SaidaFinal print_final; // Lista para acumular a saída final
 
-    #include "include/objeto.hpp"
-
-objetos::objetos(char id , double centro_objeto , double x ,  double y , double largura)
-{
-    this->id = id;
-    this->id_objeto = centro_objeto;
-    this->x = x;
-    this->y = y;
-    this->largura = largura;
-}
-
-//objeto::objeto(char id , int centro_obeto , int x ,  int y , int largura) : 
-//id(id), centro_obeto(centro_obeto), x(x), y(y), largura(largura) {}
+    
+    // Loop principal: Lê linha por linha do Standard Input (std::cin).
+    // O loop termina automaticamente ao atingir o Fim de Arquivo (EOF).
+    while (getline(std::cin, minhaString))
+    {
+        // Cria um stream temporário para análise e leitura dos campos da linha
+        std::stringstream ss(minhaString);
         
         char id;
         
-        // 2. Tenta ler o primeiro caractere (ID)
+        // Tenta ler o primeiro caractere (ID do comando)
         if (!(ss >> id)) {
-            // Se falhar a leitura do ID (linha vazia, etc.), continua para a próxima
-            continue;
+            continue; // Pula linhas vazias ou inválidas
         }
 
-        // 3. Verifica o ID lido e processa
+        // --- COMANDO 'O' (Objeto) ---
         if(id == 'O'){
             double centro_objeto, x, y, largura;
             
             if (ss >> centro_objeto >> x >> y >> largura) {
+                // Cria e insere o novo objeto na lista principal
                 objetos novo_objeto(id, centro_objeto, x, y, largura); 
                 minha_lista.insert(novo_objeto);
             } else {
@@ -128,63 +124,62 @@ objetos::objetos(char id , double centro_objeto , double x ,  double y , double 
             }
         }
 
-        // 4. COMANDO 'M' (Movimento)
-        else if(id == 'M'){ // M <tempo> <objeto> <x> <y>.
+        // --- COMANDO 'M' (Movimento) ---
+        else if(id == 'M'){ 
             double tempo;
             double objeto_busca, x_atualizado, y_atualizado;
 
             if (ss >> tempo >> objeto_busca >> x_atualizado >> y_atualizado) {
                 movimento novo_movimento(id, tempo, objeto_busca, x_atualizado, y_atualizado);
                 
-                // Chamada CORRIGIDA: passando a lista e os dados de movimento.
+                // Atualiza as coordenadas do objeto na lista
                 novo_movimento.movimentar(minha_lista);
             } else {
                 std::cerr << "Erro de formato na linha de movimento (M): faltando valores numéricos." << std::endl;
             }
         } 
         
-        // 5. COMANDO 'C' (Cena) - Ação que dispara a ordenação
-        else if(id == 'C'){ // C <tempo>
+        // --- COMANDO 'C' (Cena - Processamento e Saída) ---
+        else if(id == 'C'){ 
             double tempo;
             if (ss >> tempo) {
                    
-                // 1. ORDENAÇÃO da lista e PROCESSAMENTO (popula a lista interna de Cena)
+                // 1. Prepara a cena: Ordena a lista por Y (distância) e detecta a oclusão
                 minha_lista.ordenaPorY();
                 minha_cena.processaCena(minha_lista, tempo);
                 
-                // 2. GRAVAÇÃO/PREPARAÇÃO: Apenas ordena a lista INTERNA de Cena
+                // 2. Ordena os segmentos visíveis gerados (por id_objeto)
                 minha_cena.gravaCena();
 
-                // 3. TRANSFERÊNCIA E LIMPEZA (Novo processo no main.cpp)
+                // 3. TRANSFERÊNCIA E LIMPEZA: Move os nós de Cena para a lista de Saída Final
                 Cena::Segmento* current_segmento = minha_cena.getHeadSegmentos();
                 Cena::Segmento* next_segmento = nullptr;
 
                 while(current_segmento != nullptr) {
-                    // Insere os dados crus na lista de saída final
+                    // Insere os dados na lista de saída final para impressão posterior
                     print_final.insere(
                         current_segmento->tempo,
-                        (int)current_segmento->id_objeto, // Converte para int, como no output
+                        (int)current_segmento->id_objeto, 
                         current_segmento->inicio,
                         current_segmento->fim
                     );
 
-                    // Deleta o nó e avança (limpa a memória da Cena)
+                    // Deleta o nó e avança (limpa a memória da Cena após o processamento)
                     next_segmento = current_segmento->prox;
                     delete current_segmento;
                     current_segmento = next_segmento;
                 }
                 
-                // CORREÇÃO ESSENCIAL: Zera os ponteiros de Cena para evitar o double free no destrutor.
+                // Zera os ponteiros head/tail da Cena. CRÍTICO para evitar o double free no destrutor de Cena.
                 minha_cena.resetSegmentos(); 
                 
             } else {
                 std::cerr << "Erro de formato na linha de cena (C): faltando tempo." << std::endl;
             }
-
         }
     }
 
-    // IMPRESSÃO FINAL: Executada assim que o std::cin chega ao EOF.
+    // IMPRESSÃO FINAL: Executada após o término da entrada (EOF).
     print_final.imprime(); 
 
     return 0;

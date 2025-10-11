@@ -1,29 +1,38 @@
 #include <iostream>
-#include <stdexcept> // INCLUA ESTA BIBLIOTECA para usar exceções
-#include <algorithm> // Não estritamente necessário para Mergesort manual, mas útil
+#include <stdexcept> 
+#include <algorithm> 
 
 #include "include/lista.hpp"
 #include "include/objeto.hpp"
 #include "include/movimento.hpp"
 
+// ==========================================================
+// FUNÇÕES DE MANIPULAÇÃO DA LISTA (CRUD)
+// ==========================================================
+
+/**
+ * @brief Insere um novo objeto no final da lista encadeada.
+ * @param obj Objeto a ser inserido.
+ */
 void listas::insert(objetos obj)
 {
-    Node* newNode = new Node(obj); // cria novo nó
-    //newNode->prox = nullptr;
+    Node* newNode = new Node(obj); // Cria novo nó (alocação de memória)
 
-    if (head == nullptr) // lista vazia
+    if (head == nullptr) // Lista vazia
     {
         head = newNode;
         tail = newNode;
     }
-    else // lista não vazia
+    else // Lista não vazia
     {
-        tail->prox = newNode; // liga o último nó ao novo
-        tail = newNode;       // atualiza o tail
+        tail->prox = newNode; 
+        tail = newNode;       // Atualiza o ponteiro tail
     }
 }
 
-
+/**
+ * @brief Imprime todos os objetos da lista (uso de debug).
+ */
 void listas::print()
 {
     Node* current = head;
@@ -36,36 +45,53 @@ void listas::print()
     }
 }
 
+/**
+ * @brief Busca um objeto pelo seu ID e retorna a referência para ele.
+ * @param chave_objeto ID do objeto a ser buscado.
+ * @return Referência para o objeto encontrado na lista.
+ * @throws std::runtime_error se o objeto não for encontrado.
+ */
 objetos& listas::busca(double chave_objeto)
 {
     Node* current = head;
     while (current)
     {
-        // A chave de busca (objeto) é o campo 'centro_objeto'
         if (current->obj.id_objeto == chave_objeto)
         {
-            // Retorna a referência do objeto real no nó
             return current->obj; 
         }
         current = current->prox;
     }
      
-    // Se o loop terminar sem encontrar, lança uma exceção.
-    // É OBRIGATÓRIO que uma função que retorna uma referência retorne algo.
     throw std::runtime_error("Erro: Objeto não encontrado na lista com a chave especificada.");
 }
 
-
-// ... (implementação de listas::insert, listas::print, listas::busca omitidas)
-
-// ----------------------------------------------------
-// IMPLEMENTAÇÃO DO MERGESORT PARA LISTA ENCADEADA
-// ----------------------------------------------------
+// ==========================================================
+// DESTRUTOR (Limpeza de Memória)
+// ==========================================================
 
 /**
- * @brief Encontra o nó do meio da lista usando o método lento/rápido (slow/fast pointers).
- * @param head O nó inicial da lista ou sublista.
- * @return O ponteiro para o nó do meio.
+ * @brief Destrutor da lista. Libera a memória de todos os nós.
+ */
+listas::~listas() {
+    Node* current = head;
+    Node* nextNode = nullptr;
+    while (current != nullptr)
+    {
+        nextNode = current->prox;
+        delete current; // Libera a memória do nó
+        current = nextNode;
+    }
+    head = nullptr;
+    tail = nullptr;
+}
+
+// ==========================================================
+// IMPLEMENTAÇÃO DO MERGESORT (Ordenação por Y)
+// ==========================================================
+
+/**
+ * @brief Encontra o nó do meio da lista (slow/fast pointers).
  */
 listas::Node* listas::getMiddle(Node* head) {
     if (head == nullptr) {
@@ -73,7 +99,7 @@ listas::Node* listas::getMiddle(Node* head) {
     }
 
     Node* slow = head;
-    Node* fast = head->prox; // Começa um à frente para garantir a primeira metade correta
+    Node* fast = head->prox; 
 
     while (fast != nullptr) {
         fast = fast->prox;
@@ -86,24 +112,16 @@ listas::Node* listas::getMiddle(Node* head) {
 }
 
 /**
- * @brief Combina duas sublistas ordenadas (a e b).
- * @param a Primeira sublista (ordenada).
- * @param b Segunda sublista (ordenada).
- * @return A cabeça da nova lista mesclada e ordenada.
+ * @brief Combina duas sublistas ordenadas.
+ * A ordenação é feita de forma DECEDENTE de Y (para oclusão: objetos mais longe primeiro).
  */
 listas::Node* listas::merge(Node* a, Node* b) {
-    // Caso base: se uma das listas for nula
-    if (a == nullptr) {
-        return b;
-    }
-    if (b == nullptr) {
-        return a;
-    }
+    if (a == nullptr) return b;
+    if (b == nullptr) return a;
 
     Node* result = nullptr;
 
-    // A oclusão prioriza o objeto mais próximo (MAIOR Y).
-    // Ordenamos em ordem decrescente de Y.
+    // Lógica de ordenação: a.obj.y <= b.obj.y garante que o objeto mais longe (menor Y) vá primeiro
     if (a->obj.y <= b->obj.y) {
         result = a;
         result->prox = merge(a->prox, b);
@@ -116,12 +134,9 @@ listas::Node* listas::merge(Node* a, Node* b) {
 }
 
 /**
- * @brief Divide a lista e chama a função de merge.
- * @param head O nó inicial da sublista a ser ordenada.
- * @return A cabeça da sublista ordenada.
+ * @brief Divide a lista e chama a função de merge (recursivamente).
  */
 listas::Node* listas::mergeSort(Node* head) {
-    // Caso base: lista nula ou lista com apenas um elemento
     if (head == nullptr || head->prox == nullptr) {
         return head;
     }
@@ -131,9 +146,9 @@ listas::Node* listas::mergeSort(Node* head) {
     Node* nextOfMiddle = middle->prox;
 
     // 2. Separa a lista em duas metades
-    middle->prox = nullptr; // Termina a primeira metade
+    middle->prox = nullptr; 
 
-    // 3. Chama o mergeSort recursivamente para as duas metades
+    // 3. Chama o mergeSort recursivamente
     Node* left = mergeSort(head);
     Node* right = mergeSort(nextOfMiddle);
 
@@ -142,13 +157,13 @@ listas::Node* listas::mergeSort(Node* head) {
 }
 
 /**
- * @brief Função pública que inicia o Mergesort na lista.
+ * @brief Inicia o Mergesort na lista principal.
  */
 void listas::ordenaPorY() {
     // 1. Chama a função recursiva no head
     head = mergeSort(head);
     
-    // 2. Atualiza o ponteiro tail (necessário após reordenar a lista)
+    // 2. Atualiza o ponteiro tail
     Node* current = head;
     while (current != nullptr && current->prox != nullptr) {
         current = current->prox;
