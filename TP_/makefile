@@ -1,24 +1,73 @@
-# O alvo principal, que agora depende da compilação de todos os objetos na pasta obj.
-all: obj/objeto.o obj/lista.o obj/movimento.o obj/cena.o obj/main.o
-	g++ -std=c++11 obj/objeto.o obj/lista.o obj/movimento.o obj/cena.o obj/main.o -o bin/tp1.out
+# Makefile para o TP2 - Versão Explícita
+#
+# Alvo principal: 'all'
+# Este alvo depende do executável final.
+all: bin/tp2.out
 
-# --- Regras de Compilação: Mover .o para /obj ---
+# Regra de Linkagem:
+# Cria o executável final 'bin/tp2.out'.
+# Depende de TODOS os seus arquivos .o na pasta obj/.
+#
+# ADICIONE AQUI OS .o DO SIMULADOR, ESCALONADOR, ETC., QUANDO OS CRIAR
+bin/tp2.out: obj/main.o obj/Demanda.o obj/Parada.o obj/Trecho.o obj/ListaDemanda.o obj/ListaTrecho.o obj/Corrida.o
+	@mkdir -p bin
+	g++ obj/main.o obj/Demanda.o obj/Parada.o obj/Trecho.o obj/ListaDemanda.o obj/ListaTrecho.o obj/Corrida.o -o bin/tp2.out
 
-obj/objeto.o: src/objeto.cpp include/objeto.hpp
-	g++ -I . -std=c++11 -c src/objeto.cpp -o obj/objeto.o
+# --- Regras de Compilação ---
+# Cada arquivo .cpp da sua pasta 'src/' DEVE ter uma regra aqui.
 
-obj/lista.o: src/lista.cpp include/lista.hpp include/objeto.hpp
-	g++ -I . -std=c++11 -c src/lista.cpp -o obj/lista.o     
+# Regra para compilar main.cpp -> main.o
+# (Você precisará adicionar 'include/Simulador.h' aqui quando o criar)
+obj/main.o: src/main.cpp
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/main.cpp -o obj/main.o
 
-obj/movimento.o: src/movimento.cpp include/movimento.hpp include/lista.hpp include/objeto.hpp
-	g++ -I . -std=c++11 -c src/movimento.cpp -o obj/movimento.o
+# Regra para compilar Demanda.cpp -> Demanda.o
+obj/Demanda.o: src/Demanda.cpp include/Demanda.h include/Coordenada.h
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/Demanda.cpp -o obj/Demanda.o
 
-obj/cena.o: src/cena.cpp include/cena.hpp include/lista.hpp include/objeto.hpp
-	g++ -I . -std=c++11 -c src/cena.cpp -o obj/cena.o
+# Regra para compilar Parada.cpp -> Parada.o
+obj/Parada.o: src/Parada.cpp include/Parada.h include/Demanda.h include/Coordenada.h
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/Parada.cpp -o obj/Parada.o
 
-obj/main.o: src/main.cpp include/lista.hpp include/objeto.hpp include/movimento.hpp include/cena.hpp
-	g++ -I . -std=c++11 -c src/main.cpp -o obj/main.o
-    
-# --- Regra de Limpeza: Remove apenas os arquivos gerados (mantendo as pastas) ---
+# Regra para compilar Trecho.cpp -> Trecho.o
+obj/Trecho.o: src/Trecho.cpp include/Trecho.h include/Parada.h include/Coordenada.h
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/Trecho.cpp -o obj/Trecho.o
+
+# Regra para compilar ListaDemanda.cpp -> ListaDemanda.o (NOVO)
+obj/ListaDemanda.o: src/ListaDemanda.cpp include/ListaDemanda.h include/Demanda.h
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/ListaDemanda.cpp -o obj/ListaDemanda.o
+
+# Regra para compilar ListaTrecho.cpp -> ListaTrecho.o (NOVO)
+obj/ListaTrecho.o: src/ListaTrecho.cpp include/ListaTrecho.h include/Trecho.h
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/ListaTrecho.cpp -o obj/ListaTrecho.o
+
+# Regra para compilar Corrida.cpp -> Corrida.o (ATUALIZADO)
+obj/Corrida.o: src/Corrida.cpp include/Corrida.h include/ListaDemanda.h include/ListaTrecho.h include/Trecho.h include/Demanda.h
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/Corrida.cpp -o obj/Corrida.o
+
+# --- ADICIONE AQUI AS REGRAS PARA SEUS NOVOS ARQUIVOS ---
+# Exemplo para quando você criar o Simulador:
+#
+# obj/Simulador.o: src/Simulador.cpp include/Simulador.h include/Demanda.h ... (outros includes)
+# 	@mkdir -p obj
+# 	g++ -std=c++11 -Wall -Iinclude -c src/Simulador.cpp -o obj/Simulador.o
+#
+# Exemplo para quando você criar o Escalonador:
+#
+# obj/Escalonador.o: src/Escalonador.cpp include/Escalonador.h include/MinHeap.h ... (outros includes)
+# 	@mkdir -p obj
+# 	g++ -std=c++11 -Wall -Iinclude -c src/Escalonador.cpp -o obj/Escalonador.o
+#
+
+
+# --- Regra de Limpeza ---
+# Remove todos os arquivos .o da pasta obj/ e o executável da pasta bin/
 clean:
-	rm -f obj/*.o bin/tp1.out
+	rm -f obj/*.o bin/tp2.out
