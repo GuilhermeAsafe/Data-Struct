@@ -18,7 +18,7 @@ public:
     double tempoGasto;
     TipoTrecho natureza;
 
-    // Construtor padrão (necessário para a lista encadeada)
+    // Construtor padrão (necessário para a ListaTrecho)
     Trecho(); 
 
     /**

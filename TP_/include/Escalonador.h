@@ -6,32 +6,14 @@
 
 class Escalonador {
 private:
-    MinHeap heap; // O escalonador "CONTÉM" um MinHeap
+    MinHeap heap;
 
 public:
-    /**
-     * Operação 1: Inicializa (o construtor faz isso)
-     */
-    Escalonador();
+    Escalonador();  // 1. Inicializa
+    ~Escalonador(); // 4. Finaliza
 
-    /**
-     * Operação 4: Finaliza (o destrutor faz isso)
-     */
-    ~Escalonador();
-
-    /**
-     * Operação 2: Insere Evento [cite: 1064]
-     */
-    void InsereEvento(Evento* evento);
-
-    /**
-     * Operação 3: Retira Proximo Evento [cite: 1065]
-     */
-    Evento* RetiraProximoEvento();
-
-    /**
-     * Função auxiliar para o loop da simulação.
-     */
+    void InsereEvento(Evento* evento);       // 2. Insere Evento
+    Evento* RetiraProximoEvento(); // 3. Retira Proximo Evento
     bool estaVazio() const;
 };
 

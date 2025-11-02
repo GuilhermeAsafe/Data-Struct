@@ -18,6 +18,9 @@ public:
     TipoParada tipo;
     Demanda* passageiro; // Referência à demanda (passageiro)
 
+    // Construtor padrão (necessário para a ListaParada)
+    Parada();
+
     /**
      * Construtor da Parada.
      */

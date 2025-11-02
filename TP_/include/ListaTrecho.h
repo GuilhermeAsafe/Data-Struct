@@ -1,17 +1,14 @@
 #ifndef LISTATRECHO_H
 #define LISTATRECHO_H
 
-#include "Trecho.h" // Precisa saber o que é Trecho
+#include "Trecho.h"
 
-// O Nó da lista, armazena o Trecho por valor
 struct NoTrecho {
     Trecho dado;
     NoTrecho* proximo;
-
     NoTrecho(Trecho t);
 };
 
-// A Lista Encadeada que gerencia os Nós
 class ListaTrecho {
 private:
     NoTrecho* inicio;
@@ -20,14 +17,12 @@ private:
 
 public:
     ListaTrecho();
-    ~ListaTrecho(); // Destrutor para limpar os nós
+    ~ListaTrecho();
 
     void push_back(Trecho t);
-    Trecho& get(int index); // Retorna referência para o Trecho
+    Trecho& get(int index);
     int size() const;
     bool empty() const;
-    
-    // Limpa a lista (deleta os nós)
     void clear(); 
 };
 

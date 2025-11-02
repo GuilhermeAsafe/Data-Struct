@@ -5,7 +5,11 @@ Demanda::Demanda(int id, int tempo, Coordenada origem, Coordenada destino)
       tempo(tempo), 
       origem(origem), 
       destino(destino), 
-      estado(DEMANDADA) // Toda demanda começa como "demandada"
+      estado(DEMANDADA) 
 {
-    // Construtor inicializa os membros
+    // Construtor
+}
+
+double Demanda::getDistanciaIdeal() const {
+    return this->origem.distancia(this->destino);
 }

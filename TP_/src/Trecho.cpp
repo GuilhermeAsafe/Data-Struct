@@ -1,5 +1,5 @@
 #include "Trecho.h"
-#include <stdexcept> // Para exceções
+#include <stdexcept> 
 
 // Construtor padrão
 Trecho::Trecho() 
@@ -17,16 +17,17 @@ Trecho::Trecho(Parada* origem, Parada* destino, double gama_velocidade)
         throw std::invalid_argument("Paradas de origem ou destino não podem ser nulas.");
     }
 
-    // Calcula a distância usando a função da Coordenada
     this->distancia = paradaOrigem->localizacao.distancia(paradaDestino->localizacao);
 
-    // Calcula o tempo gasto (Tempo = Distância / Velocidade) [cite: 895-896]
     if (gama_velocidade <= 0) {
-        throw std::invalid_argument("Velocidade (gama) deve ser positiva.");
+        // Se a velocidade for 0, o tempo é "infinito"
+        // Para evitar divisão por zero, definimos como 0
+        this->tempoGasto = 0.0;
+    } else {
+        // Tempo = Distância / Velocidade
+        this->tempoGasto = this->distancia / gama_velocidade;
     }
-    this->tempoGasto = this->distancia / gama_velocidade;
 
-    // Define a natureza do trecho
     definirNatureza();
 }
 
@@ -36,9 +37,8 @@ void Trecho::definirNatureza() {
         this->natureza = COLETA;
     } else if (paradaOrigem->tipo == DESEMBARQUE && paradaDestino->tipo == DESEMBARQUE) {
         this->natureza = ENTREGA;
-    } else if (paradaOrigem->tipo == EMBARQUE && paradaDestino->tipo == DESEMBARQUE) {
-        this->natureza = DESLOCAMENTO;
     } else {
-        this->natureza = DESLOCAMENTO; 
+        // Inclui EMBARQUE -> DESEMBARQUE
+        this->natureza = DESLOCAMENTO;
     }
 }

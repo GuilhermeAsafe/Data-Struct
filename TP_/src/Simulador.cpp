@@ -2,10 +2,32 @@
 #include "Corrida.h"
 #include <iostream>
 #include <fstream>
-#include <sstream>
+#include <iomanip> // Para std::setprecision
 
-Simulador::Simulador() {
+Simulador::Simulador() 
+    : eta(0), gama(0.0), delta(0.0), alfa(0.0), beta(0.0), lambda(0.0),
+      demandasProcessadas(nullptr), numTotalDemandas(0)
+{
     // Construtor
+}
+
+Simulador::~Simulador() {
+    // Destrutor: Limpa toda a memória alocada dinamicamente
+    
+    // 1. Deleta todas as Demandas
+    for (int i = 0; i < listaDeTodasDemandas.size(); ++i) {
+        delete listaDeTodasDemandas.get(i);
+    }
+    
+    // 2. Deleta todas as Corridas
+    for (int i = 0; i < listaDeTodasCorridas.size(); ++i) {
+        delete listaDeTodasCorridas.get(i);
+    }
+
+    // 3. Deleta o array de booleanos
+    if (demandasProcessadas != nullptr) {
+        delete[] demandasProcessadas;
+    }
 }
 
 void Simulador::carregarEntrada(const char* nomeArquivo) {
@@ -14,9 +36,6 @@ void Simulador::carregarEntrada(const char* nomeArquivo) {
         std::cerr << "Erro: Não foi possível abrir o arquivo de entrada: " << nomeArquivo << std::endl;
         return;
     }
-
-    std::string linha;
-    int numDemandas;
 
     // 1-6: Lê os parâmetros
     arquivo >> this->eta;
@@ -27,55 +46,141 @@ void Simulador::carregarEntrada(const char* nomeArquivo) {
     arquivo >> this->lambda;
 
     // 7: Lê o número de demandas
-    arquivo >> numDemandas;
+    arquivo >> this->numTotalDemandas;
     
+    // Prepara o array de controle
+    this->demandasProcessadas = new bool[numTotalDemandas];
+    for (int i = 0; i < numTotalDemandas; ++i) {
+        demandasProcessadas[i] = false;
+    }
+
     // Loop para ler todas as demandas
-    for (int i = 0; i < numDemandas; ++i) {
+    for (int i = 0; i < numTotalDemandas; ++i) {
         int id, tempo, ox, oy, dx, dy;
         arquivo >> id >> tempo >> ox >> oy >> dx >> dy;
         
         Coordenada origem(ox, oy);
         Coordenada destino(dx, dy);
         
-        // Aloca dinamicamente a Demanda
         Demanda* novaDemanda = new Demanda(id, tempo, origem, destino);
-        
-        // Adiciona na lista
         listaDeTodasDemandas.push_back(novaDemanda);
     }
     
     arquivo.close();
+    
+    // Configura a precisão da saída de ponto flutuante para 2 casas decimais
+    std::cout << std::fixed << std::setprecision(2);
 }
 
 void Simulador::processarDemandas() {
-    // --- TODO: IMPLEMENTAR FASE 1 ---
-    // Esta é a lógica de agrupamento de corridas [cite: 915-925].
-    //
-    // Para cada demanda C0 em 'listaDeTodasDemandas':
-    // 1. Crie uma nova Corrida (alocada dinamicamente, ex: new Corrida())
-    // 2. Tente adicionar C1, C2... à Corrida,
-    //    verificando os critérios (delta, alfa, beta, lambda, eta).
-    // 3. Quando a Corrida estiver pronta (individual ou combinada):
-    //    - Gere a sequência de paradas e trechos dela.
-    //    - Crie o PRIMEIRO Evento (ex: chegada na primeira parada).
-    //    - escalonador.InsereEvento(primeiroEvento);
+    // --- FASE 1: Construção das Corridas ---
+    // Implementa o algoritmo da Seção 1
     
-    std::cout << "Aviso: Fase 1 (processarDemandas) não implementada." << std::endl;
+    for (int i = 0; i < numTotalDemandas; ++i) {
+        
+        if (demandasProcessadas[i]) {
+            continue;
+        }
+
+        Demanda* c0 = listaDeTodasDemandas.get(i);
+        demandasProcessadas[i] = true; 
+
+        Corrida* novaCorrida = new Corrida(this->gama);
+        novaCorrida->adicionarDemanda(c0); 
+        
+        // Tenta combinar com as próximas demandas
+        for (int j = i + 1; j < numTotalDemandas; ++j) {
+            
+            if (demandasProcessadas[j]) {
+                continue;
+            }
+
+            Demanda* ci = listaDeTodasDemandas.get(j);
+
+            // 1. Critério de Tempo (delta)
+            if (ci->tempo - c0->tempo >= this->delta) {
+                break; // Interrompe verificação (demandas estão ordenadas)
+            }
+
+            // 2. Critério de Capacidade (eta)
+            if (novaCorrida->demandasAtendidas.size() >= this->eta) {
+                break; // Interrompe verificação (corrida cheia)
+            }
+
+            // 3. Critério de Origens (alfa)
+            bool origensOk = true;
+            for (int k = 0; k < novaCorrida->demandasAtendidas.size(); ++k) {
+                Demanda* ck = novaCorrida->demandasAtendidas.get(k);
+                if (ci->origem.distancia(ck->origem) >= this->alfa) {
+                    origensOk = false;
+                    break;
+                }
+            }
+            if (!origensOk) {
+                // CORREÇÃO: O PDF diz para "interrompa a avaliação"
+                break; 
+            }
+
+            // 4. Critério de Destinos (beta)
+            bool destinosOk = true;
+            for (int k = 0; k < novaCorrida->demandasAtendidas.size(); ++k) {
+                Demanda* ck = novaCorrida->demandasAtendidas.get(k);
+                if (ci->destino.distancia(ck->destino) >= this->beta) {
+                    destinosOk = false;
+                    break;
+                }
+            }
+            if (!destinosOk) {
+                // CORREÇÃO: O PDF diz para "interrompa a avaliação"
+                break;
+            }
+
+            // 5. Critério de Eficiência (lambda)
+            novaCorrida->adicionarDemanda(ci); // Adiciona temporariamente
+
+            // O critério é eficiencia > lambda.
+            // Se for <=, falha.
+            if (novaCorrida->eficiencia <= this->lambda) {
+                // Falhou: remove e interrompe
+                novaCorrida->removerUltimaDemanda();
+                break; // Interrompe a avaliação desta corrida
+            } else {
+                // Sucesso: marca ci como processada
+                demandasProcessadas[j] = true;
+            }
+        } // Fim do loop 'j' (tentativa de combinação)
+
+        listaDeTodasCorridas.push_back(novaCorrida);
+
+        // 6. Agendamento do primeiro evento
+        if (novaCorrida->trechos.size() > 0) {
+            Trecho& primeiroTrecho = novaCorrida->trechos.get(0);
+            
+            double tempoInicio = novaCorrida->demandasAtendidas.get(0)->tempo;
+            
+            // *** GARANTA QUE ESTA LINHA USA .tempoGasto ***
+            double tempoChegada = tempoInicio + primeiroTrecho.tempoGasto;
+            
+            Evento* primeiroEvento = new Evento(
+                tempoChegada,
+                CHEGADA_PARADA,
+                novaCorrida,
+                0 // Índice do primeiro trecho (trecho 0)
+            );
+            
+            escalonador.InsereEvento(primeiroEvento);
+        }
+    } // Fim do loop 'i' (processamento de demandas)
 }
 
 void Simulador::executar() {
     // --- FASE 2: Loop de Simulação ---
-    // [cite: 927-930]
+    //
     
     while (!escalonador.estaVazio()) {
-        // 1. Pega o próximo evento
         Evento* eventoAtual = escalonador.RetiraProximoEvento();
-        
-        // 2. Processa o evento
         processarEvento(eventoAtual);
-        
-        // 3. O evento processado é nosso, devemos deletá-lo
-        delete eventoAtual;
+        delete eventoAtual; 
     }
 }
 
@@ -83,38 +188,39 @@ void Simulador::processarEvento(Evento* evento) {
     Corrida* corrida = evento->corrida;
     int indiceTrechoConcluido = evento->indiceTrecho;
 
-    // TODO: Processar o que acontece no evento (ex: atualizar estado da demanda)
-    
     // Verifica se este foi o ÚLTIMO trecho/parada da corrida
     if (indiceTrechoConcluido == corrida->trechos.size() - 1) {
         // --- É O ÚLTIMO EVENTO DA CORRIDA ---
-        // 2. Se for o último, gere as estatísticas [cite: 929]
-        // [cite: 1022-1030]
+        // 1. Gera as estatísticas e imprime a saída
         
-        std::cout << evento->tempo << " "; // 1. Tempo de conclusão
-        std::cout << corrida->distanciaTotal << " "; // 2. Distância
-        std::cout << corrida->numeroParadas << " "; // 3. Número de paradas
-        
-        // 4. Sequência de coordenadas
-        // (Você precisa implementar a lógica para imprimir as paradas)
-        std::cout << std::endl;
+        // 1. Tempo de conclusão
+        std::cout << evento->tempo << " ";
+        // 2. Distância total
+        std::cout << corrida->distanciaTotal << " ";
+        // 3. Número de paradas
+        std::cout << corrida->numeroParadas << " ";
 
-        // Limpa a memória da corrida
-        // (Isso depende de como você gerencia o ciclo de vida da Corrida)
-        // delete corrida; 
+        // 4. Sequência de coordenadas
+        // CORREÇÃO: Cast para (double) para formatar a saída
         
+        std::cout << static_cast<double>(corrida->trechos.get(0).paradaOrigem->localizacao.x) << " "
+                  << static_cast<double>(corrida->trechos.get(0).paradaOrigem->localizacao.y);
+                  
+        for (int i = 0; i < corrida->trechos.size(); ++i) {
+            std::cout << " " << static_cast<double>(corrida->trechos.get(i).paradaDestino->localizacao.x)
+                      << " " << static_cast<double>(corrida->trechos.get(i).paradaDestino->localizacao.y);
+        }
+        std::cout << std::endl; // Fim da linha de saída
+
     } else {
         // --- NÃO É O ÚLTIMO EVENTO ---
-        // 3. Senão, escalone o próximo evento [cite: 930]
+        // 3. Senão, escalone o próximo evento
         
-        // Pega o próximo trecho
         int indiceProximoTrecho = indiceTrechoConcluido + 1;
         Trecho& proximoTrecho = corrida->trechos.get(indiceProximoTrecho);
         
-        // Calcula o tempo de chegada
         double tempoProximoEvento = evento->tempo + proximoTrecho.tempoGasto;
         
-        // Cria o novo evento
         Evento* proximoEvento = new Evento(
             tempoProximoEvento,
             CHEGADA_PARADA,
@@ -122,7 +228,6 @@ void Simulador::processarEvento(Evento* evento) {
             indiceProximoTrecho
         );
         
-        // Insere no escalonador
         escalonador.InsereEvento(proximoEvento);
     }
 }

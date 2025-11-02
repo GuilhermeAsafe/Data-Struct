@@ -3,7 +3,7 @@
 
 #include "Coordenada.h"
 
-// Estados possíveis de uma demanda [cite: 1038-1041]
+// Estados possíveis de uma demanda
 enum EstadoDemanda {
     DEMANDADA,
     INDIVIDUAL,
@@ -23,6 +23,11 @@ public:
      * Construtor para inicializar uma demanda lida do arquivo.
      */
     Demanda(int id, int tempo, Coordenada origem, Coordenada destino);
+
+    /**
+     * Calcula a distância "ideal" (linha reta) desta demanda.
+     */
+    double getDistanciaIdeal() const;
 };
 
 #endif // DEMANDA_H

@@ -1,7 +1,7 @@
 #ifndef COORDENADA_H
 #define COORDENADA_H
 
-#include <cmath> // Para usar sqrt() no cálculo da distância
+#include <cmath> // Para usar sqrt() e pow()
 
 // Struct simples para armazenar coordenadas X e Y
 struct Coordenada {
@@ -15,6 +15,7 @@ struct Coordenada {
      * Calcula a distância Euclidiana entre esta coordenada e outra.
      */
     double distancia(const Coordenada& outra) const {
+        // Dist = sqrt((x2-x1)^2 + (y2-y1)^2)
         return std::sqrt(std::pow(this->x - outra.x, 2) + std::pow(this->y - outra.y, 2));
     }
 };

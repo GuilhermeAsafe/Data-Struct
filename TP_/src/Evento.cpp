@@ -8,6 +8,6 @@ Evento::Evento(double t, TipoEvento tp, Corrida* c, int indice)
 }
 
 bool Evento::operator>(const Evento& outro) const {
-    // Compara pelo tempo. Essencial para o MinHeap.
+    // Compara pelo tempo.
     return this->tempo > outro.tempo;
 }

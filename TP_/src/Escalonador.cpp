@@ -1,23 +1,20 @@
 #include "Escalonador.h"
 
 Escalonador::Escalonador() {
-    // 1. Inicializa: O construtor do MinHeap já é chamado aqui,
-    // inicializando a fila de prioridade.
+    // 1. Inicializa: Construtor do MinHeap é chamado
 }
 
 Escalonador::~Escalonador() {
-    // 4. Finaliza: O destrutor do MinHeap será chamado aqui,
-    // limpando toda a memória alocada para os Eventos.
-    // Estatísticas de escalonamento (se necessário) seriam geradas aqui[cite: 1068].
+    // 4. Finaliza: Destrutor do MinHeap é chamado
 }
 
 void Escalonador::InsereEvento(Evento* evento) {
-    // 2. Insere Evento: Apenas repassa para o MinHeap.
+    // 2. Insere Evento
     heap.inserir(evento);
 }
 
 Evento* Escalonador::RetiraProximoEvento() {
-    // 3. Retira Proximo Evento: Apenas repassa do MinHeap.
+    // 3. Retira Proximo Evento
     return heap.removerMin();
 }
 

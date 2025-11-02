@@ -1,18 +1,18 @@
 # Makefile para o TP2 - Versão Explícita e Completa
-# [cite_start]Compilador: g++ com C++11 [cite: 2054]
+# Compilador: g++ com C++11
 # Estrutura: src, include, obj, bin
-# [cite_start]Executável: bin/tp2.out [cite: 2027]
+# Executável: bin/tp2.out
 
 # Alvo principal: 'all'
-# Este alvo depende do executável final.
 all: bin/tp2.out
 
 # Regra de Linkagem:
 # Cria o executável final 'bin/tp2.out'.
 # Depende de TODOS os arquivos .o do seu projeto.
-bin/tp2.out: obj/main.o obj/Simulador.o obj/Escalonador.o obj/MinHeap.o obj/Evento.o obj/Corrida.o obj/ListaDemanda.o obj/ListaTrecho.o obj/Trecho.o obj/Parada.o obj/Demanda.o
+bin/tp2.out: obj/main.o obj/Simulador.o obj/Escalonador.o obj/MinHeap.o obj/Evento.o obj/Corrida.o obj/ListaDemanda.o obj/ListaTrecho.o obj/ListaParada.o obj/ListaCorrida.o obj/Trecho.o obj/Parada.o obj/Demanda.o
 	@mkdir -p bin
-	g++ obj/main.o obj/Simulador.o obj/Escalonador.o obj/MinHeap.o obj/Evento.o obj/Corrida.o obj/ListaDemanda.o obj/ListaTrecho.o obj/Trecho.o obj/Parada.o obj/Demanda.o -o bin/tp2.out
+	g++ obj/main.o obj/Simulador.o obj/Escalonador.o obj/MinHeap.o obj/Evento.o obj/Corrida.o obj/ListaDemanda.o obj/ListaTrecho.o obj/ListaParada.o obj/ListaCorrida.o obj/Trecho.o obj/Parada.o obj/Demanda.o -o bin/tp2.out
+	@echo "Executável bin/tp2.out criado com sucesso."
 
 # --- Regras de Compilação ---
 # Cada arquivo .cpp da sua pasta 'src/' TEM uma regra aqui.
@@ -23,7 +23,7 @@ obj/main.o: src/main.cpp include/Simulador.h
 	g++ -std=c++11 -Wall -Iinclude -c src/main.cpp -o obj/main.o
 
 # Regra para compilar Simulador.cpp -> Simulador.o
-obj/Simulador.o: src/Simulador.cpp include/Simulador.h include/Escalonador.h include/ListaDemanda.h include/Corrida.h include/Evento.h include/Demanda.h include/Coordenada.h
+obj/Simulador.o: src/Simulador.cpp include/Simulador.h include/Escalonador.h include/ListaDemanda.h include/ListaCorrida.h include/Corrida.h include/Evento.h include/Demanda.h include/Coordenada.h
 	@mkdir -p obj
 	g++ -std=c++11 -Wall -Iinclude -c src/Simulador.cpp -o obj/Simulador.o
 
@@ -43,7 +43,7 @@ obj/Evento.o: src/Evento.cpp include/Evento.h include/Corrida.h
 	g++ -std=c++11 -Wall -Iinclude -c src/Evento.cpp -o obj/Evento.o
 
 # Regra para compilar Corrida.cpp -> Corrida.o
-obj/Corrida.o: src/Corrida.cpp include/Corrida.h include/ListaDemanda.h include/ListaTrecho.h include/Trecho.h include/Demanda.h
+obj/Corrida.o: src/Corrida.cpp include/Corrida.h include/ListaDemanda.h include/ListaTrecho.h include/ListaParada.h include/Trecho.h include/Demanda.h
 	@mkdir -p obj
 	g++ -std=c++11 -Wall -Iinclude -c src/Corrida.cpp -o obj/Corrida.o
 
@@ -56,6 +56,16 @@ obj/ListaDemanda.o: src/ListaDemanda.cpp include/ListaDemanda.h include/Demanda.
 obj/ListaTrecho.o: src/ListaTrecho.cpp include/ListaTrecho.h include/Trecho.h
 	@mkdir -p obj
 	g++ -std=c++11 -Wall -Iinclude -c src/ListaTrecho.cpp -o obj/ListaTrecho.o
+
+# Regra para compilar ListaParada.cpp -> ListaParada.o
+obj/ListaParada.o: src/ListaParada.cpp include/ListaParada.h include/Parada.h
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/ListaParada.cpp -o obj/ListaParada.o
+
+# Regra para compilar ListaCorrida.cpp -> ListaCorrida.o
+obj/ListaCorrida.o: src/ListaCorrida.cpp include/ListaCorrida.h include/Corrida.h
+	@mkdir -p obj
+	g++ -std=c++11 -Wall -Iinclude -c src/ListaCorrida.cpp -o obj/ListaCorrida.o
 
 # Regra para compilar Trecho.cpp -> Trecho.o
 obj/Trecho.o: src/Trecho.cpp include/Trecho.h include/Parada.h include/Coordenada.h
@@ -74,6 +84,6 @@ obj/Demanda.o: src/Demanda.cpp include/Demanda.h include/Coordenada.h
 
 
 # --- Regra de Limpeza ---
-# Remove todos os arquivos .o da pasta obj/ e o executável da pasta bin/
 clean:
-	rm -f obj/*.o bin/tp2.out
+	@rm -f obj/*.o bin/tp2.out
+	@echo "Arquivos compilados removidos."

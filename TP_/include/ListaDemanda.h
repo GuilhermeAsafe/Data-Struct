@@ -1,33 +1,29 @@
 #ifndef LISTADEMANDA_H
 #define LISTADEMANDA_H
 
-#include "Demanda.h" // Precisa saber o que é Demanda*
+#include "Demanda.h"
 
-// O Nó da lista, armazena um ponteiro para a Demanda
 struct NoDemanda {
     Demanda* dado;
     NoDemanda* proximo;
-
     NoDemanda(Demanda* d);
 };
 
-// A Lista Encadeada que gerencia os Nós
 class ListaDemanda {
 private:
     NoDemanda* inicio;
-    NoDemanda* fim; // Para otimizar push_back (O(1))
+    NoDemanda* fim;
     int tamanho;
 
 public:
     ListaDemanda();
-    ~ListaDemanda(); // Destrutor para limpar os nós
+    ~ListaDemanda();
 
     void push_back(Demanda* d);
     Demanda* get(int index);
+    Demanda* pop_back(); // Remove e retorna o último
     int size() const;
     bool empty() const;
-    
-    // Limpa a lista (deleta os nós, mas não as demandas)
     void clear(); 
 };
 

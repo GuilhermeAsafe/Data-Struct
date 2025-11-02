@@ -2,45 +2,44 @@
 #define SIMULADOR_H
 
 #include "Escalonador.h"
-#include "ListaDemanda.h" // A lista de demandas lidas
+#include "ListaDemanda.h"
+#include "ListaCorrida.h" // Para guardar as corridas criadas
 
 class Simulador {
 private:
-    // Parâmetros da simulação [cite: 1004-1009]
-    double eta, gama, delta, alfa, beta, lambda;
+    // Parâmetros da simulação
+    int eta; // Capacidade
+    double gama, delta, alfa, beta, lambda;
 
-    // Estruturas centrais
     Escalonador escalonador;
     ListaDemanda listaDeTodasDemandas;
-    // Você também precisará de uma lista para as Corridas geradas
+    ListaCorrida listaDeTodasCorridas; // Para gerenciar memória
+    bool* demandasProcessadas; // Array para marcar demandas já alocadas
+    int numTotalDemandas;
 
 public:
     Simulador();
+    ~Simulador(); // Destrutor para limpar a memória alocada
 
     /**
-     * Carrega o arquivo de entrada, lendo os parâmetros e
-     * preenchendo a 'listaDeTodasDemandas'.
+     * Carrega o arquivo de entrada.
      */
     void carregarEntrada(const char* nomeArquivo);
 
     /**
-     * Fase 1: Processa a 'listaDeTodasDemandas' para criar as
-     * Corridas e agendar o primeiro evento de cada uma
-     * no escalonador[cite: 915].
+     * Fase 1: Processa 'listaDeTodasDemandas' para criar Corridas
+     * e agendar o primeiro evento de cada uma.
      */
     void processarDemandas();
 
     /**
-     * Fase 2: Executa o loop principal da simulação,
-     * retirando eventos do escalonador até que ele
-     * esteja vazio[cite: 927].
+     * Fase 2: Executa o loop principal da simulação.
      */
     void executar();
 
 private:
     /**
-     * Função auxiliar para processar um único evento
-     * retirado do escalonador.
+     * Função auxiliar para processar um único evento.
      */
     void processarEvento(Evento* evento);
 };
