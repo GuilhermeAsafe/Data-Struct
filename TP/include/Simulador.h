@@ -24,7 +24,10 @@ public:
      * Carrega os dados de um stream de entrada (cin ou fstream).
      * --- MODIFICADO ---
      */
-    void carregarEntrada(std::istream& input); 
+    void carregarEntrada(std::istream& input);
+
+    void carregarEntrada();  // nova sobrecarga
+
 
     /**
      * Fase 1: Processa 'listaDeTodasDemandas' para criar Corridas

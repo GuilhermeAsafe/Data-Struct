@@ -26,8 +26,14 @@ Simulador::~Simulador() {
     }
 }
 
+
+void Simulador::carregarEntrada() {
+    carregarEntrada(std::cin);
+}
+
 // MODIFICADO: Aceita um std::istream& genérico
 void Simulador::carregarEntrada(std::istream& input) { 
+    
     
     // Não precisamos mais abrir ou fechar o arquivo,
     // apenas ler do 'input' (que pode ser cin ou um fstream).
@@ -165,6 +171,7 @@ void Simulador::processarEvento(Evento* evento) {
 
         // Imprime o std::endl (necessário para o VPL)
         std::cout << std::endl; 
+     
 
     } else {
         // --- NÃO É O ÚLTIMO EVENTO ---

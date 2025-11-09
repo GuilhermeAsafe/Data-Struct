@@ -8,7 +8,7 @@
  * Ponto de entrada principal do programa TP2.
  * Uso: ./bin/tp2.out < <arquivo_de_entrada>
  */
-int main(int argc, char* argv[]) {
+int main(){
 
     // Argumentos argc/argv não são mais usados
     
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
         Simulador simulador;
 
         // --- MODO CIN (TERMINAL) ---
-        simulador.carregarEntrada(std::cin); // Passa o cin
+        simulador.carregarEntrada(); // Passa o cin
 
         // 3. Executa a Fase 1 (Agrupamento)
         simulador.processarDemandas();
