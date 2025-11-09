@@ -1,34 +1,63 @@
-#include <iostream>  
-#include <iomanip>   
-#include <stdexcept> 
-// fstream e cstdio não são mais necessários
-#include "Simulador.h" 
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <stdexcept>
 
-/**
- * Ponto de entrada principal do programa TP2.
- * Uso: ./bin/tp2.out < <arquivo_de_entrada>
- */
-int main(){
+#include "TADs.h"
+#include "Model.h"
 
-    // Argumentos argc/argv não são mais usados
-    
-    try {
-        Simulador simulador;
+int main() {
+    std::cout.precision(2);
+    std::cout << std::fixed;
 
-        // --- MODO CIN (TERMINAL) ---
-        simulador.carregarEntrada(); // Passa o cin
+    Simulador sim;
+    std::string linha;
 
-        // 3. Executa a Fase 1 (Agrupamento)
-        simulador.processarDemandas();
+    std::getline(std::cin, linha);
+    std::stringstream ss_eta(linha);
+    ss_eta >> sim.eta;
 
-        // 4. Executa a Fase 2 (Simulação)
-        simulador.executar();
+    std::getline(std::cin, linha);
+    std::stringstream ss_gama(linha);
+    ss_gama >> sim.gama;
 
-    } catch (const std::exception& e) {
-        std::cerr << "Erro inesperado durante a execução: " << e.what() << std::endl;
-        return 2; 
+    std::getline(std::cin, linha);
+    std::stringstream ss_delta(linha);
+    ss_delta >> sim.delta;
+
+    std::getline(std::cin, linha);
+    std::stringstream ss_alfa(linha);
+    ss_alfa >> sim.alfa;
+
+    std::getline(std::cin, linha);
+    std::stringstream ss_beta(linha);
+    ss_beta >> sim.beta;
+
+    std::getline(std::cin, linha);
+    std::stringstream ss_lambda(linha);
+    ss_lambda >> sim.lambda;
+
+    std::getline(std::cin, linha);
+    std::stringstream ss_num(linha);
+    int numdemandas;
+    ss_num >> numdemandas;
+
+    for (int i = 0; i < numdemandas; ++i) {
+        Demanda* d = new Demanda();
+        
+        if (!(std::cin >> d->id >> d->tempo 
+                       >> d->origem.x >> d->origem.y 
+                       >> d->destino.x >> d->destino.y)) {
+            
+            delete d;
+            break;
+        }
+        
+        d->estado = 1;
+        sim.demandas.insere(d);
     }
 
-    // 5. Sucesso
+    sim.run();
+
     return 0;
 }
