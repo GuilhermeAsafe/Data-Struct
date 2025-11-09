@@ -1,7 +1,0 @@
-> Ideia é pegar o object e colocar na pasta obj para que o compilador tenha referencia das funções...
-
-Gerando executavel .o:
-	g++ -c nome.cpp -> incluindo em um arquivo especifico g++ -c nome.cpp -I./obj
-
-Link de todos os objetos: com o executavel.out:
-    g++ -o programa.out cod1.o cod2.o ... (linkando todos os codigos)

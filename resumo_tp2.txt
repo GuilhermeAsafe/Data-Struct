@@ -1,0 +1,63 @@
+Resumo do Fluxo de Dados do tp3
+
+### 1. Dados de Entrada
+
+Seu programa lerá um único arquivo de texto. O conteúdo desse arquivo é:
+
+* **Linhas 1-6 (Parâmetros):** 6 linhas, cada uma com um parâmetro global da simulação:
+    1.  `<eta>`: Capacidade máxima de passageiros por veículo.
+    2.  `<gama>`: Velocidade dos veículos (para calcular tempo de viagem).
+    3.  `<delta>`: Intervalo de tempo máximo para considerar corridas para combinação.
+    4.  `<alfa>`: Distância máxima permitida entre as origens.
+    5.  `<beta>`: Distância máxima permitida entre os destinos.
+    6.  `<lambda>`: Eficiência mínima que uma corrida compartilhada deve ter.
+* **Linha 7 (Contador):** Um número `<numdemandas>`, que diz quantas demandas de corrida virão a seguir.
+* **Próximas `<numdemandas>` Linhas (Demandas):** Cada linha representa uma demanda de corrida, já ordenada por tempo, no formato: `<id> <tempo> <origem_x> <origem_y> <destino_x> <destino_y>`.
+
+### 2. O que Fazer com os Dados (Manipulação)
+
+O processo é dividido em duas fases principais:
+
+**Fase 1: Construção das Corridas**
+
+Nesta fase, você decide quais demandas serão agrupadas. Você NÃO executa a simulação ainda.
+
+1.  **Carregue os Dados:** Leia todos os parâmetros e todas as `<numdemandas>` para a memória (provavelmente em uma Lista/Array, já que elas estão ordenadas por tempo).
+2.  **Itere sobre as Demandas:** Para cada demanda principal `c0` (começando da primeira), tente combiná-la com as demandas seguintes (`c1`, `c2`, ...).
+3.  **Verifique os Critérios de Combinação:** Para uma demanda `ci` ser adicionada ao grupo de `c0`, ela deve satisfazer **TODOS** os seguintes critérios:
+    * **Intervalo de Tempo:** O tempo de `ci` deve estar dentro de `delta` do tempo de `c0`.
+    * **Capacidade:** O número de corridas no grupo não pode exceder `eta`.
+    * **Distância de Origens:** A origem de `ci` deve estar a uma distância menor que `alfa` de TODAS as outras origens já no grupo.
+    * **Distância de Destinos:** O destino de `ci` deve estar a uma distância menor que `beta` de TODOS os outros destinos já no grupo.
+    * **Eficiência:** A nova rota combinada (com `ci` incluída) deve ter uma eficiência total maior que `lambda`.
+4.  **Pare e Avance:** Se uma demanda `ci` falhar em qualquer um dos testes (distância ou eficiência), ela **não** é adicionada, e você para de tentar adicionar mais corridas ao grupo de `c0`. A demanda `ci` será processada como a *próxima* demanda principal `c0`.
+5.  **Crie a Corrida:** Ao terminar de montar um grupo (seja uma corrida individual ou combinada), você cria um objeto `Corrida` (TAD Corrida).
+6.  **Agende o Início:** Você então agenda o primeiro evento dessa corrida (a primeira coleta) no seu `Escalonador`.
+
+**Fase 2: Execução da Simulação (Eventos Discretos)**
+
+Agora que todas as corridas foram definidas e seus primeiros eventos agendados, a simulação começa.
+
+1.  **Use o Escalonador:** O `Escalonador` é a sua Fila de Prioridade (MinHeap) que armazena *eventos* ordenados pelo tempo.
+2.  **Loop de Simulação:** Enquanto o Escalonador não estiver vazio, você faz:
+    * **Retire o Próximo Evento:** Pegue o evento com o menor tempo (o topo do heap).
+    * **Processe o Evento:** O evento representa uma *parada* (coleta ou entrega).
+    * **Verifique se é o Fim:** Se este evento for a *última parada* daquela corrida:
+        * Gere as estatísticas finais da corrida.
+        * Imprima a linha de saída correspondente a essa corrida.
+    * **Agende o Próximo Evento:** Se **não** for a última parada:
+        * Calcule o tempo de deslocamento até a *próxima parada* da rota.
+        * Crie um novo evento para essa próxima parada (com o tempo de chegada calculado).
+        * Insira esse novo evento no Escalonador.
+3.  **Fim:** A simulação termina quando o Escalonador ficar vazio (todas as corridas foram concluídas).
+
+### 3. Saída
+
+A saída do seu programa é gerada **durante a Fase 2**, toda vez que uma corrida é concluída.
+
+Para cada corrida (individual ou combinada) que termina, você deve imprimir **uma única linha** no seguinte formato:
+
+1.  Tempo de conclusão da corrida (o tempo do último evento dela).
+2.  Distância total percorrida.
+3.  Número total de paradas (coletas + entregas).
+4.  A sequência de coordenadas de todas as paradas, na ordem em que ocorreram.
